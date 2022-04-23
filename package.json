@@ -1,0 +1,12 @@
+{
+  "name": "Elastic-Beanstalk-Sample-App",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "express": "^4.17.3"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
