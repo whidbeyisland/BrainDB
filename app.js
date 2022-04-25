@@ -56,13 +56,40 @@ var server = http.createServer(function (req, res) {
     } else {
         // display default page
         const htmlsection_1 =
-        `<h1 class="mb-3">Undinero</h1>
-         <h4 class="mb-3">Undura is passionate about $Cause!</h4>
-         <p>Please help us out with anything you can, so that no $PersonAnimalRobot ever needs to $ExperienceBadThing again.</p>
-         <form action="" method="post" >
-             <label>Run Python script: $</label>
-             <button type="submit" class="btn btn-primary">Run</button>
-         </form>`;
+        `
+        <h1 class="mb-3">BrainDB/SRSY/Memory Marketplace</h1>
+        <h4 class="mb-3">[Subheader]</h4>
+        <p>You currently have no decks.</p>
+        <p>Get started creating cards!</p>
+        <form action="" method="post" >
+            <table style="border-collapse: collapse; border: none; max-width: 67%; margin: auto;">
+                <tr style="border: none;">
+                    <td style="border: none;">
+                        <label style="float: left;">Start with a PDF...</label>
+                    </td>
+                    <td style="border: none;">
+                        <label style="float: left;">Or paste your text here...</label>
+                    </td>
+                </tr>
+                <tr style="border: none;">
+                    <td style="border: none;">
+                        <input type="file" id="myFile" name="filename" style="float: left;">
+                    </td>
+                    <td style="border: none;">
+                        <textarea id="w3review" name="w3review" rows="4" cols="50" style="float: left;"></textarea>
+                    </td>
+                </tr>
+                <tr style="border: none;">
+                    <td style="border: none;">
+                        <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
+                    </td>
+                    <td style="border: none;">
+                        <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        `;
 
         res.writeHead(200);
         html = fs.readFileSync('index.html');
