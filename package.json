@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "child_process": "^1.0.2",
-    "express": "^4.17.3"
+    "config": "^3.3.7",
+    "express": "^4.17.3",
+    "fs": "0.0.1-security",
+    "multer": "^1.4.4"
   },
   "scripts": {
     "start": "node app.js"
