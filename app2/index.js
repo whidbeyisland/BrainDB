@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
     <h4 class="mb-3">[Subheader]</h4>
     <p>You currently have no decks.</p>
     <p>Get started creating cards!</p>
-    <form action="" method="post" enctype="multipart/form-data" >
+    <form action="/upload" method="post" enctype="multipart/form-data" >
         <table style="border-collapse: collapse; border: none; max-width: 67%; margin: auto;">
             <tr style="border: none;">
                 <td style="border: none;">
@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
     </form>
     `;
 
-    res.writeHead(200);
+    //res.writeHead(200);
     html = fs.readFileSync('index.html');
     html = html.toString().replace('$htmlsection', htmlsection_1);
     res.write(html);
@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
     // res.sendFile('index.html', {root: __dirname});
 });
 
-app.post('/', (req, res) => {
+app.post('/upload', (req, res) => {
     var body = '';
 
     req.on('data', function(chunk) {
@@ -86,14 +86,15 @@ app.post('/', (req, res) => {
     });
 
     req.on('end', function() {
+        /*
         if (req.url === '/') {
             console.log(req.files);
-
+            
             // console.log('Received message: ' + body);
 
             // coati: parse the PDF filename and text entered from the string --- prob more elegant way to do this
             
-            /*body_strings = body.split(['=', '&']);
+            body_strings = body.split(['=', '&']);
             var pdf_filename = body_strings[1];
             var text_entered = body_strings[3];
             console.log(body);*/
@@ -104,18 +105,25 @@ app.post('/', (req, res) => {
             catch {
                 _amount = 0;
             }
-            */
         } else if (req.url = '/scheduled') {
             console.log('Received task ' + req.headers['x-aws-sqsd-taskname'] + ' scheduled at ' + req.headers['x-aws-sqsd-scheduled-at']);
-        }
+        }*/
 
         // call Python donation script
         var dataToSend;
         // spawn new child process to call the python script
+        console.log('Loading, hang tight...');
         const python = spawn(
             'python',
             ['script.py']
         );
+
+        html = fs.readFileSync('index.html');
+        const htmlsection_2 =
+        `<h1 class="mb-3">Loading, hang tight...</h1>;`
+        html = html.toString().replace('$htmlsection', htmlsection_2);
+        res.write(html);
+
         // collect data from script
         python.stdout.on('data', function (data) {
             // console.log('Pipe data from python script ...');
@@ -124,14 +132,7 @@ app.post('/', (req, res) => {
         });
         // in close event we are sure that stream from child process is closed
         python.on('close', (code) => {
-            // console.log(`child process close all stdio with code ${code}`);
-            res.writeHead(200)
-            html = fs.readFileSync('index.html');
-            const htmlsection_2 =
-            `<h1 class="mb-3">Blah blah blah</h1>;`
-            html = html.toString().replace('$htmlsection', htmlsection_2);
-            res.write(html);
-            res.end();
+            res.write('<script>window.location.href="/";</script>');
         });
     });
 })
