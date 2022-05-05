@@ -12,6 +12,10 @@ const express = require('express');
 const multer = require('multer');
 const {spawn} = require('child_process');
 const app = express();
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+
 var _fs  = require("fs");
 //var _config = require("./config");
 const upload = multer({});
@@ -23,15 +27,16 @@ _handleUpload = (e) => {
     const dataForm = new FormData();
     dataForm.append('file', e.target.files[0]);  
       axios
-        .post('http://localhost:3000/', dataForm)
+        .post('http://localhost:' + port + '/upload', dataForm)
         .then(res => {
 
         })
         .catch(err => console.log(err));      
 }
 
-
 app.get('/', (req, res) => {
+    req.header("Content-Type", "application/json");
+
     // display default page
     const htmlsection_1 =
     `
@@ -51,18 +56,18 @@ app.get('/', (req, res) => {
             </tr>
             <tr style="border: none;">
                 <td style="border: none;">
-                    <input type="file" id="myFile" name="filename" style="float: left;">
+                    <input type="file" id="myFile" name="files" style="float: left;">
                 </td>
                 <td style="border: none;">
-                    <textarea id="w3review" name="w3review" rows="4" cols="50" style="float: left;"></textarea>
+                    <textarea id="myText" name="myText" rows="4" cols="50" style="float: left;"></textarea>
                 </td>
             </tr>
             <tr style="border: none;">
                 <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
+                    <button type="submit" class="btn btn-primary" style="float: left;" onclick="this._handleUpload">Generate cards</button>
                 </td>
                 <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
+                    <button type="submit" class="btn btn-primary" style="float: left;" onclick="this._handleUpload">Generate cards</button>
                 </td>
             </tr>
         </table>
@@ -79,6 +84,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
+    req.header("Content-Type", "application/json");
+
     var body = '';
 
     req.on('data', function(chunk) {
@@ -86,28 +93,23 @@ app.post('/upload', (req, res) => {
     });
 
     req.on('end', function() {
-        /*
-        if (req.url === '/') {
-            console.log(req.files);
-            
-            // console.log('Received message: ' + body);
 
-            // coati: parse the PDF filename and text entered from the string --- prob more elegant way to do this
-            
-            body_strings = body.split(['=', '&']);
-            var pdf_filename = body_strings[1];
-            var text_entered = body_strings[3];
-            console.log(body);*/
-            /*
-            try {
-                _amount = parseInt(amount_string);
-            }
-            catch {
-                _amount = 0;
-            }
-        } else if (req.url = '/scheduled') {
-            console.log('Received task ' + req.headers['x-aws-sqsd-taskname'] + ' scheduled at ' + req.headers['x-aws-sqsd-scheduled-at']);
-        }*/
+
+
+
+        
+        // coati: handle PDF uploads --- for now, just handling text
+
+
+
+
+
+
+        console.log(JSON.stringify(req.body));
+        var text = req.body.myText;
+        console.log(text);
+        fs.writeFileSync('/files/entered-text.txt', data);
+
 
         // call Python donation script
         var dataToSend;
