@@ -14,10 +14,11 @@ const {spawn} = require('child_process');
 const app = express();
 var _fs  = require("fs");
 //var _config = require("./config");
-const upload = multer({});
+//const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
 // coati: shouldn't be hardcoded as 3000, but can change that later
+/*
 _handleUpload = (e) => {
     console.log('got here');
     const dataForm = new FormData();
@@ -29,6 +30,7 @@ _handleUpload = (e) => {
         })
         .catch(err => console.log(err));      
 }
+*/
 
 // define POST and GET methods for page
 var server = http.createServer(function (req, res) {
@@ -41,7 +43,7 @@ var server = http.createServer(function (req, res) {
 
         req.on('end', function() {
             if (req.url === '/') {
-                console.log(req.files);
+                //console.log(req.files);
 
                 // console.log('Received message: ' + body);
 

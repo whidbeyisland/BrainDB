@@ -16,17 +16,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//var bodyParser = require('body-parser');
-//app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.urlencoded());
-//app.use(bodyParser.json());
-
 var _fs  = require("fs");
 //var _config = require("./config");
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
 // coati: shouldn't be hardcoded as 3000, but can change that later
+/*
 _handleUpload = (e) => {
     console.log('got here');
     const dataForm = new FormData();
@@ -38,11 +34,9 @@ _handleUpload = (e) => {
         })
         .catch(err => console.log(err));      
 }
+*/
 
 app.get('/', (req, res) => {
-    //req.header("Content-Type", "application/json");
-    //req.header("Content-Type", "text/plain;charset=UTF-8");
-
     // display default page
     const htmlsection_1 =
     `
@@ -62,7 +56,7 @@ app.get('/', (req, res) => {
             </tr>
             <tr style="border: none;">
                 <td style="border: none;">
-                    <!--<input type="file" id="myFile" style="float: left;">-->
+                    <p>[null]</p>
                 </td>
                 <td style="border: none;">
                     <textarea id="myText" name="myText" rows="4" cols="50" style="float: left;"></textarea>
@@ -70,15 +64,16 @@ app.get('/', (req, res) => {
             </tr>
             <tr style="border: none;">
                 <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;" onclick="this._handleUpload">Generate cards</button>
+                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
                 </td>
                 <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;" onclick="this._handleUpload">Generate cards</button>
+                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
                 </td>
             </tr>
         </table>
     </form>
     `;
+    // <!--<input type="file" id="myFile" style="float: left;">-->
     // <form action="/upload" method="post" enctype="multipart/form-data" >
     // name="files"
 
@@ -92,10 +87,46 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
-    res.send(JSON.stringify(req.body));
-    var test = 'test';
-    //req.header("Content-Type", "application/json");
+    //res.send(JSON.stringify(req.body));
+    //console.log(JSON.stringify(req.body));
+    var textToPass;
+    try {
+        textToPass = req.body.myText;
+    }
+    catch {
+        textToPass = 'null';
+    }
+    console.log(textToPass);
 
+    // call Python script
+    var dataToSend;
+    // spawn new child process to call the python script
+    console.log('Loading, hang tight...');
+    const python = spawn(
+        'python',
+        ['script.py',
+        '--text',
+        textToPass]
+    );
+
+    html = fs.readFileSync('index.html');
+    const htmlsection_2 =
+    `<h1 class="mb-3">Loading, hang tight...</h1>;`
+    html = html.toString().replace('$htmlsection', htmlsection_2);
+    res.write(html);
+
+    // collect data from script
+    python.stdout.on('data', function (data) {
+        // console.log('Pipe data from python script ...');
+        dataToSend = data.toString();
+        console.log(dataToSend);
+    });
+    // in close event we are sure that stream from child process is closed
+    python.on('close', (code) => {
+        res.write('<script>window.location.href="/";</script>');
+    });
+
+    /*
     var body = '';
 
     req.on('data', function(chunk) {
@@ -107,18 +138,19 @@ app.post('/upload', (req, res) => {
 
 
 
-
+        
         // coati: handle PDF uploads --- for now, just handling text
 
 
 
 
-
-        //res.send(test);
+        //res.send(JSON.stringify(req.body));
         console.log(JSON.stringify(req.body));
-        var text = req.body.myText;
-        console.log(text);
-        fs.writeFileSync('/files/entered-text.txt', data);
+        //var text = req.body.myText;
+        console.log('got here');
+        //var data = text;
+        //console.log(text);
+        //fs.writeFileSync('/files/entered-text.txt', data);
 
 
         // call Python donation script
@@ -147,6 +179,7 @@ app.post('/upload', (req, res) => {
             res.write('<script>window.location.href="/";</script>');
         });
     });
+    */
 })
 
 app.listen(port, () => {
