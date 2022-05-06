@@ -13,8 +13,13 @@ const multer = require('multer');
 const {spawn} = require('child_process');
 const app = express();
 
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//var bodyParser = require('body-parser');
+//app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.urlencoded());
+//app.use(bodyParser.json());
 
 var _fs  = require("fs");
 //var _config = require("./config");
@@ -35,7 +40,8 @@ _handleUpload = (e) => {
 }
 
 app.get('/', (req, res) => {
-    req.header("Content-Type", "application/json");
+    //req.header("Content-Type", "application/json");
+    //req.header("Content-Type", "text/plain;charset=UTF-8");
 
     // display default page
     const htmlsection_1 =
@@ -44,7 +50,7 @@ app.get('/', (req, res) => {
     <h4 class="mb-3">[Subheader]</h4>
     <p>You currently have no decks.</p>
     <p>Get started creating cards!</p>
-    <form action="/upload" method="post" enctype="multipart/form-data" >
+    <form action="/upload" method="post" enctype="application/json" >
         <table style="border-collapse: collapse; border: none; max-width: 67%; margin: auto;">
             <tr style="border: none;">
                 <td style="border: none;">
@@ -56,7 +62,7 @@ app.get('/', (req, res) => {
             </tr>
             <tr style="border: none;">
                 <td style="border: none;">
-                    <input type="file" id="myFile" name="files" style="float: left;">
+                    <!--<input type="file" id="myFile" style="float: left;">-->
                 </td>
                 <td style="border: none;">
                     <textarea id="myText" name="myText" rows="4" cols="50" style="float: left;"></textarea>
@@ -73,6 +79,8 @@ app.get('/', (req, res) => {
         </table>
     </form>
     `;
+    // <form action="/upload" method="post" enctype="multipart/form-data" >
+    // name="files"
 
     //res.writeHead(200);
     html = fs.readFileSync('index.html');
@@ -84,7 +92,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
-    req.header("Content-Type", "application/json");
+    res.send(JSON.stringify(req.body));
+    var test = 'test';
+    //req.header("Content-Type", "application/json");
 
     var body = '';
 
@@ -97,14 +107,14 @@ app.post('/upload', (req, res) => {
 
 
 
-        
+
         // coati: handle PDF uploads --- for now, just handling text
 
 
 
 
 
-
+        //res.send(test);
         console.log(JSON.stringify(req.body));
         var text = req.body.myText;
         console.log(text);
