@@ -42,10 +42,18 @@ app.get('/', (req, res) => {
     `
     <h1 class="mb-3">BrainDB/SRSY/Memory Marketplace</h1>
     <h4 class="mb-3">[Subheader]</h4>
-    <p>You currently have no decks.</p>
+    $deckList
     <p>Get started creating cards!</p>
-    <form action="/upload" method="post" enctype="application/json" >
-        <table style="border-collapse: collapse; border: none; max-width: 67%; margin: auto;">
+    <form action="/upload" method="post" enctype="application/json" style="max-width: 67%; margin: auto;">
+        <table style="border-collapse: collapse; border: none;">
+            <tr style="border: none;">
+                <td style="border: none; width: 50%">
+                    <label style="float: left">Choose a name for your deck:</label>
+                </td>
+                <td style="border: none;">
+                    <input type="text" id="deckName" name="deckName" style="float: left;">
+                </td>
+            </tr>
             <tr style="border: none;">
                 <td style="border: none;">
                     <label style="float: left;">Start with a PDF...</label>
@@ -77,11 +85,35 @@ app.get('/', (req, res) => {
     // <form action="/upload" method="post" enctype="multipart/form-data" >
     // name="files"
 
-    //res.writeHead(200);
+    res.writeHead(200);
     html = fs.readFileSync('index.html');
     html = html.toString().replace('$htmlsection', htmlsection_1);
-    res.write(html);
-    res.end();
+
+    // write the list of decks to the screen
+    // first, check if they exist
+    var deckString = '';
+    var deckFolder = './files/decks';
+    fs.readdir(deckFolder, (err, files) => {
+        files.forEach(file => {
+            // console.log(file);
+            if (file.substring(file.length - 4) == '.csv') {
+                deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
+            }
+        });
+      });
+    
+    setTimeout(function() {
+        if (deckString == '') {
+            deckString = '<p>You currently have no decks.</p>';
+        }
+        else {
+            deckString = '<p>Your decks:</p>' + deckString + '<br>';
+        }
+        html = html.replace('$deckList', deckString);
+    
+        res.write(html);
+        res.end();
+    }, 1000);
 
     // res.sendFile('index.html', {root: __dirname});
 });
@@ -90,13 +122,15 @@ app.post('/upload', (req, res) => {
     //res.send(JSON.stringify(req.body));
     //console.log(JSON.stringify(req.body));
     var textToPass;
+    var deckName;
     try {
-        textToPass = req.body.myText;
+        _myText = req.body.myText;
+        _deckName = req.body.deckName;
     }
     catch {
         textToPass = 'null';
+        deckName = '';
     }
-    console.log(textToPass);
 
     // call Python script
     var dataToSend;
@@ -105,8 +139,11 @@ app.post('/upload', (req, res) => {
     const python = spawn(
         'python',
         ['script.py',
-        '--text',
-        textToPass]
+        '--myText',
+        _myText,
+        '--deckName',
+        _deckName
+    ]
     );
 
     html = fs.readFileSync('index.html');

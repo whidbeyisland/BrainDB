@@ -9,12 +9,16 @@ import random
 import pickle
 import os
 import sys
+import pandas as pd
+import uuid
 
 path_cwd = os.getcwd()
 
 body = ''
+deck_name = ''
 try:
   body = sys.argv[2]
+  deck_name = sys.argv[4]
 except Exception as e:
   print(e)
   body = '''
@@ -38,7 +42,6 @@ except Exception as e:
   I’m Bryan Lynn.
 
             '''
-print('body: ' + body)
 
 # To start with, let's make 10 flashcards.
 
@@ -62,6 +65,15 @@ for i in range(0, len(bert_summary_sentences) - 1):
   bert_summary_sentences[i] += '.'
 bert_summary_sentences_string = '\n'.join(bert_summary_sentences)
 print(bert_summary_sentences_string)
+
+# If the user has not provided a deck name, attempt to set a default one now, based on the first sentence. Otherwise, it
+# has been initialized as a basic Guid.
+
+if deck_name == '':
+  try:
+    deck_name = bert_summary_sentences[0][:30]
+  except:
+    deck_name = uuid.uuid4().hex
 
 # From here on out it's faster.
 
@@ -118,7 +130,7 @@ def find_keyword_in_sentence(sentence, nums_allowed, persons_allowed, places_all
   _keyword = _words[random.randint(0, len(_words) - 1)]
   return _keyword
 
-print(find_keyword_in_sentence('My name is Wolfgang and I was born in 1990 in Berlin', True, True, True))
+# print(find_keyword_in_sentence('My name is Wolfgang and I was born in 1990 in Berlin', True, True, True))
 
 # Defining a function to actually cloze out that keyword, which we chose in the above function:
 
@@ -131,7 +143,7 @@ def sentence_clozed(sentence, nums_allowed, persons_allowed, places_allowed):
   sentence_new = sentence_new.replace(keyword_caps, '___' + keyword_categ)
   return [sentence_new, _keyword]
 
-print(sentence_clozed('My name is Wolfgang and I was born in Berlin in 1990', True, True, True))
+# print(sentence_clozed('My name is Wolfgang and I was born in Berlin in 1990', True, True, True))
 
 # Whew! Now it's finally time to get your cloze-deleted cards. You can run this cell multiple times to get the same sentences with different keywords clozed out.
 
@@ -139,4 +151,11 @@ sentences_clozed = []
 for i in range(0, len(bert_summary_sentences)):
   # cloze out the keyword in each sentence
   sentences_clozed.append(sentence_clozed(bert_summary_sentences[i], True, True, True))
-print(sentences_clozed)
+# print(sentences_clozed)
+
+# Save it all as a DataFrame
+
+deck_df = pd.DataFrame(sentences_clozed, columns = ['Front', 'Back'])
+deck_path = os.path.join(path_cwd, 'files', 'decks', deck_name + '.csv')
+deck_df.to_csv(deck_path)
+print(deck_df)
