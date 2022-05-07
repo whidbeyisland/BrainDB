@@ -17,11 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var _fs  = require("fs");
-//var _config = require("./config");
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
-// coati: shouldn't be hardcoded as 3000, but can change that later
+// coati: future support for uploading PDFs
 /*
 _handleUpload = (e) => {
     console.log('got here');
@@ -119,8 +118,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
-    //res.send(JSON.stringify(req.body));
-    //console.log(JSON.stringify(req.body));
     var textToPass;
     var deckName;
     try {
@@ -162,61 +159,6 @@ app.post('/upload', (req, res) => {
     python.on('close', (code) => {
         res.write('<script>window.location.href="/";</script>');
     });
-
-    /*
-    var body = '';
-
-    req.on('data', function(chunk) {
-        body += chunk;
-    });
-
-    req.on('end', function() {
-
-
-
-
-        
-        // coati: handle PDF uploads --- for now, just handling text
-
-
-
-
-        //res.send(JSON.stringify(req.body));
-        console.log(JSON.stringify(req.body));
-        //var text = req.body.myText;
-        console.log('got here');
-        //var data = text;
-        //console.log(text);
-        //fs.writeFileSync('/files/entered-text.txt', data);
-
-
-        // call Python donation script
-        var dataToSend;
-        // spawn new child process to call the python script
-        console.log('Loading, hang tight...');
-        const python = spawn(
-            'python',
-            ['script.py']
-        );
-
-        html = fs.readFileSync('index.html');
-        const htmlsection_2 =
-        `<h1 class="mb-3">Loading, hang tight...</h1>;`
-        html = html.toString().replace('$htmlsection', htmlsection_2);
-        res.write(html);
-
-        // collect data from script
-        python.stdout.on('data', function (data) {
-            // console.log('Pipe data from python script ...');
-            dataToSend = data.toString();
-            console.log(dataToSend);
-        });
-        // in close event we are sure that stream from child process is closed
-        python.on('close', (code) => {
-            res.write('<script>window.location.href="/";</script>');
-        });
-    });
-    */
 })
 
 app.listen(port, () => {
