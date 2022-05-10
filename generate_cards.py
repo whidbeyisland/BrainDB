@@ -14,7 +14,7 @@ import uuid
 import time
 
 from config import userid
-from connect_to_db import execute_query
+from query_executor import QueryExecutor
 
 path_cwd = os.getcwd()
 
@@ -168,19 +168,22 @@ print(deck_df)
 
 # Also store deck on RDS SQL Server instance
 
-# deck_id_sql = uuid.uuid4()
-deck_id_sql = '9F7C52D5-BA1C-4A11-90A2-2FB7F8F4A4AF'
-query_string = '''
-INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
-  \'%s\',
-  \'%s\',
-  \'%s\',
-  GETDATE(),
-  GETDATE()
-);
-''' % (deck_id_sql, userid, deck_name)
+q = QueryExecutor()
+
+deck_id_sql = uuid.uuid4()
+query_string = 'INSERT INTO TestTable VALUES (8)'
+# query_string = '''
+# INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
+#   \'%s\',
+#   \'%s\',
+#   \'%s\',
+#   GETDATE(),
+#   GETDATE()
+# );
+# ''' % (deck_id_sql, userid, deck_name)
+# print(type(query_string))
 print(query_string)
-execute_query(query_string)
+q.execute_insert_query(query_string)
 
 # len(sentences_clozed)
 for i in range(0, 5):
@@ -200,7 +203,7 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
 );
 ''' % (deck_id_sql, 'front test', 'back test')
     print(query_string)
-    execute_query(query_string)
+    q.execute_insert_query(query_string)
   except Exception as e:
     print(e)
 

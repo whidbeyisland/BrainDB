@@ -6,3 +6,4 @@ summarizer==0.0.7
 adodbapi==2.6.2.0
 pywin32==304
 pypiwin32==223
+pyodbc==4.0.32
