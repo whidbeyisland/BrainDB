@@ -135,7 +135,7 @@ app.post('/upload', (req, res) => {
     console.log('Loading, hang tight...');
     const python = spawn(
         'python',
-        ['script.py',
+        ['generate_cards.py',
         '--myText',
         _myText,
         '--deckName',

@@ -3,3 +3,6 @@ transformers==4.11.3
 bert-extractive-summarizer==0.10.1
 sentence-transformers==2.2.0
 summarizer==0.0.7
+adodbapi==2.6.2.0
+pywin32==304
+pypiwin32==223

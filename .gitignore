@@ -2,3 +2,5 @@ extract-pdf-2.py
 extract-pdf-3.py
 extract-text-pdf.py
 make_donation.py
+config.py
+connect_db_2.py
