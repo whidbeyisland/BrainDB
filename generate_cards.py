@@ -171,18 +171,16 @@ print(deck_df)
 q = QueryExecutor()
 
 deck_id_sql = uuid.uuid4()
-query_string = 'INSERT INTO TestTable VALUES (8)'
-# query_string = '''
-# INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
-#   \'%s\',
-#   \'%s\',
-#   \'%s\',
-#   GETDATE(),
-#   GETDATE()
-# );
-# ''' % (deck_id_sql, userid, deck_name)
-# print(type(query_string))
-print(query_string)
+# query_string = 'INSERT INTO TestTable VALUES (8)'
+query_string = '''
+INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
+  \'%s\',
+  \'%s\',
+  \'%s\',
+  GETDATE(),
+  GETDATE()
+);
+''' % (deck_id_sql, userid, deck_name)
 q.execute_insert_query(query_string)
 
 # len(sentences_clozed)
@@ -201,8 +199,7 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
   GETDATE(),
   GETDATE()
 );
-''' % (deck_id_sql, 'front test', 'back test')
-    print(query_string)
+''' % (deck_id_sql, front, back)
     q.execute_insert_query(query_string)
   except Exception as e:
     print(e)
