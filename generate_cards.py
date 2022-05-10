@@ -11,6 +11,10 @@ import os
 import sys
 import pandas as pd
 import uuid
+import time
+
+from config import userid
+from query_executor import QueryExecutor
 
 path_cwd = os.getcwd()
 
@@ -153,9 +157,51 @@ for i in range(0, len(bert_summary_sentences)):
   sentences_clozed.append(sentence_clozed(bert_summary_sentences[i], True, True, True))
 # print(sentences_clozed)
 
+# ----------------------STORAGE---------------------------
+
 # Save it all as a DataFrame
 
 deck_df = pd.DataFrame(sentences_clozed, columns = ['Front', 'Back'])
 deck_path = os.path.join(path_cwd, 'files', 'decks', deck_name + '.csv')
 deck_df.to_csv(deck_path)
 print(deck_df)
+
+# Also store deck on RDS SQL Server instance
+
+q = QueryExecutor()
+
+deck_id_sql = uuid.uuid4()
+# query_string = 'INSERT INTO TestTable VALUES (8)'
+query_string = '''
+INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
+  \'%s\',
+  \'%s\',
+  \'%s\',
+  GETDATE(),
+  GETDATE()
+);
+''' % (deck_id_sql, userid, deck_name)
+q.execute_insert_query(query_string)
+
+# len(sentences_clozed)
+for i in range(0, 5):
+  try:
+    time.sleep(1)
+    front = sentences_clozed[i][0]
+    front.replace('\'', '\\\'')
+    back = sentences_clozed[i][1]
+    back.replace('\'', '\\\'')
+    query_string = '''
+INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
+  \'%s\',
+  \'%s\',
+  \'%s\',
+  GETDATE(),
+  GETDATE()
+);
+''' % (deck_id_sql, front, back)
+    q.execute_insert_query(query_string)
+  except Exception as e:
+    print(e)
+
+print('Backed up to Amazon RDS')
