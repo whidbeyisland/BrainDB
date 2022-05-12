@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
     // display default page
     const htmlsection_1 =
     `
-    <h1 class="mb-3">BrainDB/SRSY/Memory Marketplace</h1>
+    <h1 class="mb-3">BrainDB</h1>
     <h4 class="mb-3">[Subheader]</h4>
     $deckList
     <p>Get started creating cards!</p>
@@ -94,6 +94,10 @@ app.get('/', (req, res) => {
     html = fs.readFileSync('index.html');
     html = html.toString().replace('$htmlsection', htmlsection_1);
 
+
+
+    // login functionality
+
     // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
     aws_amplify.Auth.configure({
         accessKeyId: awsconfig.accessKeyId,
@@ -112,7 +116,8 @@ app.get('/', (req, res) => {
     // signUp(username, password, email);
     // confirmSignUp(username, code)
     signIn(username, password);
-    //console.log(auth_funcs.testFunc());
+
+    
 
     // write the list of decks to the screen
     // first, check if they exist
@@ -155,9 +160,8 @@ app.post('/upload', (req, res) => {
         deckName = '';
     }
 
-    // call Python script
+    // call Python script via a spawned child process
     var dataToSend;
-    // spawn new child process to call the python script
     console.log('Loading, hang tight...');
     const python = spawn(
         'python',
@@ -177,11 +181,9 @@ app.post('/upload', (req, res) => {
 
     // collect data from script
     python.stdout.on('data', function (data) {
-        // console.log('Pipe data from python script ...');
         dataToSend = data.toString();
         console.log(dataToSend);
     });
-    // in close event we are sure that stream from child process is closed
     python.on('close', (code) => {
         res.write('<script>window.location.href="/";</script>');
     });
