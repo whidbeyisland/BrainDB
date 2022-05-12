@@ -7,18 +7,24 @@ var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 
-// initialize Express
+// imports
 const express = require('express');
 const multer = require('multer');
 const {spawn} = require('child_process');
+const _fs  = require('fs');
+const aws_amplify = require('aws-amplify');
+const aws_amplify_core = require('@aws-amplify/core');
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var _fs  = require("fs");
+const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
+const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
+
+
 
 // coati: future support for uploading PDFs
 /*
@@ -39,7 +45,7 @@ app.get('/', (req, res) => {
     // display default page
     const htmlsection_1 =
     `
-    <h1 class="mb-3">BrainDB/SRSY/Memory Marketplace</h1>
+    <h1 class="mb-3">BrainDB</h1>
     <h4 class="mb-3">[Subheader]</h4>
     $deckList
     <p>Get started creating cards!</p>
@@ -88,6 +94,31 @@ app.get('/', (req, res) => {
     html = fs.readFileSync('index.html');
     html = html.toString().replace('$htmlsection', htmlsection_1);
 
+
+
+    // login functionality
+
+    // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
+    aws_amplify.Auth.configure({
+        accessKeyId: awsconfig.accessKeyId,
+        secretAccessKey: awsconfig.secretAccessKey,
+        mandatorySignIn: false,
+        region: awsconfig.region,
+        aws_user_pools_id: awsconfig.aws_user_pools_id,
+        aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
+    });
+
+    username = 'TestUser5';
+    password = 'TestPwd135%!';
+    email = 'test@test.edu';
+    code = '268783';
+    
+    // signUp(username, password, email);
+    // confirmSignUp(username, code)
+    signIn(username, password);
+
+    
+
     // write the list of decks to the screen
     // first, check if they exist
     var deckString = '';
@@ -129,9 +160,8 @@ app.post('/upload', (req, res) => {
         deckName = '';
     }
 
-    // call Python script
+    // call Python script via a spawned child process
     var dataToSend;
-    // spawn new child process to call the python script
     console.log('Loading, hang tight...');
     const python = spawn(
         'python',
@@ -140,7 +170,7 @@ app.post('/upload', (req, res) => {
         _myText,
         '--deckName',
         _deckName
-    ]
+        ]
     );
 
     html = fs.readFileSync('index.html');
@@ -151,11 +181,9 @@ app.post('/upload', (req, res) => {
 
     // collect data from script
     python.stdout.on('data', function (data) {
-        // console.log('Pipe data from python script ...');
         dataToSend = data.toString();
         console.log(dataToSend);
     });
-    // in close event we are sure that stream from child process is closed
     python.on('close', (code) => {
         res.write('<script>window.location.href="/";</script>');
     });
