@@ -6,9 +6,8 @@ async function signUp(username, password, email) {
             username,
             password,
             attributes: {
-                email,          // optional
-                //phone_number,   // optional - E.164 number convention
-                // other custom attributes 
+                email,
+                //phone_number
             }
         });
         console.log(user);

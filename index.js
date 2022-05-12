@@ -24,16 +24,6 @@ const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
-/*
-function read(f) {
-    return fs.readFileSync(f).toString();
-}
-function include(f) {
-    eval.apply(global, [read(f)]);
-}
-include('./auth-funcs.js');
-*/
-
 
 
 // coati: future support for uploading PDFs
@@ -153,42 +143,6 @@ app.get('/', (req, res) => {
     // res.sendFile('index.html', {root: __dirname});
 });
 
-/*
-async function signUp(username, password, email) {
-    try {
-        const { user } = await aws_amplify.Auth.signUp({
-            username,
-            password,
-            attributes: {
-                email,          // optional
-                //phone_number,   // optional - E.164 number convention
-                // other custom attributes 
-            }
-        });
-        console.log(user);
-    } catch (error) {
-        console.log('error signing up:', error);
-    }
-}
-
-async function confirmSignUp() {
-    try {
-        console.log(await aws_amplify.Auth.confirmSignUp(username, code));
-    } catch (error) {
-        console.log('error confirming sign up', error);
-    }
-}
-
-async function signIn() {
-    try {
-        const user = await aws_amplify.Auth.signIn(username, password);
-        console.log(user);
-    } catch (error) {
-        console.log('error signing in', error);
-    }
-}
-*/
-
 app.post('/upload', (req, res) => {
     var textToPass;
     var deckName;
@@ -212,7 +166,7 @@ app.post('/upload', (req, res) => {
         _myText,
         '--deckName',
         _deckName
-    ]
+        ]
     );
 
     html = fs.readFileSync('index.html');
