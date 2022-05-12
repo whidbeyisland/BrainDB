@@ -11,12 +11,20 @@ var log = function(entry) {
 const express = require('express');
 const multer = require('multer');
 const {spawn} = require('child_process');
+const aws_amplify = require('aws-amplify');
+const aws_amplify_core = require('@aws-amplify/core');
+// const dotenv = require('dotenv');
+// dotenv.config();
+// const awsconfig = require('./aws-exports');
+// console.log(awsconfig.aws_project_region);
+// const aws_exports = require('aws-exports')
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var _fs  = require("fs");
+const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
@@ -88,6 +96,22 @@ app.get('/', (req, res) => {
     html = fs.readFileSync('index.html');
     html = html.toString().replace('$htmlsection', htmlsection_1);
 
+    // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
+    aws_amplify.Auth.configure({
+        accessKeyId: awsconfig.accessKeyId,
+        secretAccessKey: awsconfig.secretAccessKey,
+        mandatorySignIn: false,
+        region: awsconfig.region,
+        aws_user_pools_id: awsconfig.aws_user_pools_id,
+        aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
+    });
+
+    username = 'TestUser2';
+    password = 'TestPwd135%!';
+    email = 'testuser@test.edu';
+    
+    signUp(username, password, email);
+
     // write the list of decks to the screen
     // first, check if they exist
     var deckString = '';
@@ -116,6 +140,31 @@ app.get('/', (req, res) => {
 
     // res.sendFile('index.html', {root: __dirname});
 });
+
+async function signUp(username, password, email) {
+    try {
+        const { user } = await aws_amplify.Auth.signUp({
+            username,
+            password,
+            attributes: {
+                email,          // optional
+                //phone_number,   // optional - E.164 number convention
+                // other custom attributes 
+            }
+        });
+        console.log(user);
+    } catch (error) {
+        console.log('error signing up:', error);
+    }
+}
+
+async function signIn() {
+    try {
+        const user = await aws_amplify.Auth.signIn(username, password);
+    } catch (error) {
+        console.log('error signing in', error);
+    }
+}
 
 app.post('/upload', (req, res) => {
     var textToPass;
