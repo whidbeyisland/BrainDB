@@ -7,26 +7,34 @@ var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 
-// initialize Express
+// imports
 const express = require('express');
 const multer = require('multer');
 const {spawn} = require('child_process');
+const _fs  = require('fs');
 const aws_amplify = require('aws-amplify');
 const aws_amplify_core = require('@aws-amplify/core');
-// const dotenv = require('dotenv');
-// dotenv.config();
-// const awsconfig = require('./aws-exports');
-// console.log(awsconfig.aws_project_region);
-// const aws_exports = require('aws-exports')
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var _fs  = require("fs");
+const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
+
+/*
+function read(f) {
+    return fs.readFileSync(f).toString();
+}
+function include(f) {
+    eval.apply(global, [read(f)]);
+}
+include('./auth-funcs.js');
+*/
+
+
 
 // coati: future support for uploading PDFs
 /*
@@ -108,12 +116,13 @@ app.get('/', (req, res) => {
 
     username = 'TestUser5';
     password = 'TestPwd135%!';
-    email = 'davisj17@miamioh.edu';
+    email = 'test@test.edu';
     code = '268783';
     
     // signUp(username, password, email);
     // confirmSignUp(username, code)
     signIn(username, password);
+    //console.log(auth_funcs.testFunc());
 
     // write the list of decks to the screen
     // first, check if they exist
@@ -144,6 +153,7 @@ app.get('/', (req, res) => {
     // res.sendFile('index.html', {root: __dirname});
 });
 
+/*
 async function signUp(username, password, email) {
     try {
         const { user } = await aws_amplify.Auth.signUp({
@@ -177,6 +187,7 @@ async function signIn() {
         console.log('error signing in', error);
     }
 }
+*/
 
 app.post('/upload', (req, res) => {
     var textToPass;
