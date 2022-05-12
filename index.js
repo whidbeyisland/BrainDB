@@ -106,11 +106,14 @@ app.get('/', (req, res) => {
         aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
     });
 
-    username = 'TestUser2';
+    username = 'TestUser5';
     password = 'TestPwd135%!';
-    email = 'testuser@test.edu';
+    email = 'davisj17@miamioh.edu';
+    code = '268783';
     
-    signUp(username, password, email);
+    // signUp(username, password, email);
+    // confirmSignUp(username, code)
+    signIn(username, password);
 
     // write the list of decks to the screen
     // first, check if they exist
@@ -158,9 +161,18 @@ async function signUp(username, password, email) {
     }
 }
 
+async function confirmSignUp() {
+    try {
+        console.log(await aws_amplify.Auth.confirmSignUp(username, code));
+    } catch (error) {
+        console.log('error confirming sign up', error);
+    }
+}
+
 async function signIn() {
     try {
         const user = await aws_amplify.Auth.signIn(username, password);
+        console.log(user);
     } catch (error) {
         console.log('error signing in', error);
     }
