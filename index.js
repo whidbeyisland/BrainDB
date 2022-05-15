@@ -95,7 +95,7 @@ app.get('/', (req, res) => {
     html = html.toString().replace('$htmlsection', htmlsection_1);
 
 
-
+    /*
     // login functionality
 
     // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
@@ -116,7 +116,7 @@ app.get('/', (req, res) => {
     // signUp(username, password, email);
     // confirmSignUp(username, code)
     signIn(username, password);
-
+    */
     
 
     // write the list of decks to the screen
@@ -149,15 +149,15 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
-    var textToPass;
-    var deckName;
+    var _myText;
+    var _deckName;
     try {
         _myText = req.body.myText;
         _deckName = req.body.deckName;
     }
     catch {
-        textToPass = 'null';
-        deckName = '';
+        _myText = 'null';
+        _deckName = '';
     }
 
     // call Python script via a spawned child process
