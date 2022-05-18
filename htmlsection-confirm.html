@@ -1,5 +1,6 @@
-<h1 class="mb-3">Sign up</h1>
-<form action="/signup" method="post" enctype="application/json" style="max-width: 67%; margin: auto;">
+<h1 class="mb-3">Confirm your account</h1>
+<form action="/signup-confirm" method="post" enctype="application/json" style="max-width: 67%; margin: auto;">
+    <p>You should have a confirmation code in your email. Please enter it below, along with your username.</p>
     <table style="border-collapse: collapse; border: none;">
         <tr style="border: none;">
             <td style="border: none; width: 50%">
@@ -11,18 +12,10 @@
         </tr>
         <tr style="border: none;">
             <td style="border: none; width: 50%">
-                <p>Password</p>
+                <p>Code</p>
             </td>
             <td style="border: none;">
-                <input type="text" id="password" name="password" style="float: left;">
-            </td>
-        </tr>
-        <tr style="border: none;">
-            <td style="border: none; width: 50%">
-                <p>Email</p>
-            </td>
-            <td style="border: none;">
-                <input type="text" id="email" name="email" style="float: left;">
+                <input type="text" id="code" name="code" style="float: left;">
             </td>
         </tr>
         <tr style="border: none;">
@@ -33,4 +26,4 @@
         </tr>
     </table>
 </form>
-<p>Already have an account?</p> <a href="/login"><button type="button">Log in</button></a>
+<p>Didn't get the code? Try signing up again:</p> <a href="/signup"><button type="button">Sign up</button></a>

@@ -26,9 +26,34 @@ const { resolveNaptr } = require('dns');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
 
-// handling credentials
-var cur_user = '';
 
+
+// login functionality
+var cur_user = '';
+var aws_working = true;
+try {
+    aws_amplify.Auth.configure({
+        accessKeyId: awsconfig.accessKeyId,
+        secretAccessKey: awsconfig.secretAccessKey,
+        mandatorySignIn: false,
+        region: awsconfig.region,
+        aws_user_pools_id: awsconfig.aws_user_pools_id,
+        aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
+    });
+
+    /*
+    username = 'TestUser5';
+    password = 'TestPwd135%!';
+    email = 'test@test.edu';
+    code = '268783';
+    
+    // signUp(username, password, email);
+    // confirmSignUp(username, code);
+    signIn(username, password);
+    */
+} catch {
+    aws_working = false;
+}
 
 
 // coati: future support for uploading PDFs
@@ -61,7 +86,7 @@ app.get('/', (req, res) => {
         // <form action="/upload" method="post" enctype="multipart/form-data" >
         // name="files"
 
-        //res.writeHead(200);
+        res.writeHead(200);
         html = fs.readFileSync('index.html');
         html = html.toString().replace('$htmlsection', htmlsection_start);
 
@@ -170,9 +195,36 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    res.writeHead(200);
-    console.log('log in');
-    res.end();
+    /*
+    username = 'TestUser5';
+    password = 'TestPwd135%!';
+    email = 'test@test.edu';
+    code = '268783';
+    */
+
+    var _username = '';
+    var _password = '';
+
+    try {
+        _username = req.body.username;
+        _password = req.body.password;
+    } catch {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password');
+        res.end();
+    }
+    
+    if (aws_working == true) {
+        try {
+            signIn(_username, _password);
+            res.writeHead(200);
+        }
+        catch {
+            res.writeHead(404);
+            res.write('<p>Login failed</p>');
+        }
+        res.end();
+    }
 })
 
 app.get('/signup', (req, res) => {
@@ -185,9 +237,64 @@ app.get('/signup', (req, res) => {
 })
 
 app.post('/signup', (req, res) => {
+    var _username = '';
+    var _password = '';
+
+    try {
+        _username = req.body.username;
+        _password = req.body.password;
+    } catch {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password');
+        res.end();
+    }
+    
+    if (aws_working == true) {
+        try {
+            signUp(_username, _password, _email);
+            res.writeHead(200);
+        }
+        catch {
+            res.writeHead(404);
+            res.write('<p>Login failed</p>');
+        }
+        res.end();
+    }
+})
+
+app.get('/signup-confirm', (req, res) => {
+    html = fs.readFileSync('index.html');
+    var htmlsection_confirm = _fs.readFileSync('htmlsection-confirm.html', 'utf8');
+    html = html.toString().replace('$htmlsection', htmlsection_confirm);
     res.writeHead(200);
-    console.log('sign up');
+    res.write(html);
     res.end();
+})
+
+app.post('/signup-confirm', (req, res) => {
+    var _username = '';
+    var _code = '';
+
+    try {
+        _username = req.body.username;
+        _code = req.body.code;
+    } catch {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and confirmation code');
+        res.end();
+    }
+    
+    if (aws_working == true) {
+        try {
+            confirmSignUp(username, code);
+            res.writeHead(200);
+        }
+        catch {
+            res.writeHead(404);
+            res.write('<p>Login failed</p>');
+        }
+        res.end();
+    }
 })
 
 app.listen(port, () => {
