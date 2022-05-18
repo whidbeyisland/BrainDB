@@ -43,56 +43,14 @@ _handleUpload = (e) => {
 
 app.get('/', (req, res) => {
     // display default page
-    const htmlsection_1 =
-    `
-    <h1 class="mb-3">BrainDB</h1>
-    <h4 class="mb-3">[Subheader]</h4>
-    $deckList
-    <p>Get started creating cards!</p>
-    <form action="/upload" method="post" enctype="application/json" style="max-width: 67%; margin: auto;">
-        <table style="border-collapse: collapse; border: none;">
-            <tr style="border: none;">
-                <td style="border: none; width: 50%">
-                    <label style="float: left">Choose a name for your deck:</label>
-                </td>
-                <td style="border: none;">
-                    <input type="text" id="deckName" name="deckName" style="float: left;">
-                </td>
-            </tr>
-            <tr style="border: none;">
-                <td style="border: none;">
-                    <label style="float: left;">Start with a PDF...</label>
-                </td>
-                <td style="border: none;">
-                    <label style="float: left;">Or paste your text here...</label>
-                </td>
-            </tr>
-            <tr style="border: none;">
-                <td style="border: none;">
-                    <p>[null]</p>
-                </td>
-                <td style="border: none;">
-                    <textarea id="myText" name="myText" rows="4" cols="50" style="float: left;"></textarea>
-                </td>
-            </tr>
-            <tr style="border: none;">
-                <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
-                </td>
-                <td style="border: none;">
-                    <button type="submit" class="btn btn-primary" style="float: left;">Generate cards</button>
-                </td>
-            </tr>
-        </table>
-    </form>
-    `;
+    var htmlsection_start = _fs.readFileSync('htmlsection-start.html', 'utf8');
     // <!--<input type="file" id="myFile" style="float: left;">-->
     // <form action="/upload" method="post" enctype="multipart/form-data" >
     // name="files"
 
     res.writeHead(200);
     html = fs.readFileSync('index.html');
-    html = html.toString().replace('$htmlsection', htmlsection_1);
+    html = html.toString().replace('$htmlsection', htmlsection_start);
 
 
     /*
@@ -174,9 +132,8 @@ app.post('/upload', (req, res) => {
     );
 
     html = fs.readFileSync('index.html');
-    const htmlsection_2 =
-    `<h1 class="mb-3">Loading, hang tight...</h1>;`
-    html = html.toString().replace('$htmlsection', htmlsection_2);
+    var htmlsection_loading = _fs.readFileSync('htmlsection-loading.html', 'utf8');
+    html = html.toString().replace('$htmlsection', htmlsection_loading);
     res.write(html);
 
     // collect data from script
