@@ -32,6 +32,7 @@ const upload = multer({});
 var cur_user = '';
 var aws_working = true;
 try {
+    // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
     aws_amplify.Auth.configure({
         accessKeyId: awsconfig.accessKeyId,
         secretAccessKey: awsconfig.secretAccessKey,
@@ -40,17 +41,6 @@ try {
         aws_user_pools_id: awsconfig.aws_user_pools_id,
         aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
     });
-
-    /*
-    username = 'TestUser5';
-    password = 'TestPwd135%!';
-    email = 'test@test.edu';
-    code = '268783';
-    
-    // signUp(username, password, email);
-    // confirmSignUp(username, code);
-    signIn(username, password);
-    */
 } catch {
     aws_working = false;
     console.log('AWS not working');
@@ -74,7 +64,7 @@ _handleUpload = (e) => {
 
 app.get('/', (req, res) => {
     // check if user logged in
-    if (cur_user == '') {
+    if (1 == 3) {
         res.writeHead(200);
         res.write('<script>window.location.href="/login";</script>');
         res.end();
@@ -89,32 +79,8 @@ app.get('/', (req, res) => {
 
         res.writeHead(200);
         html = fs.readFileSync('index.html');
+        html = html.toString().replace('$username', user_string());
         html = html.toString().replace('$htmlsection', htmlsection_start);
-
-
-        /*
-        // login functionality
-
-        // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
-        aws_amplify.Auth.configure({
-            accessKeyId: awsconfig.accessKeyId,
-            secretAccessKey: awsconfig.secretAccessKey,
-            mandatorySignIn: false,
-            region: awsconfig.region,
-            aws_user_pools_id: awsconfig.aws_user_pools_id,
-            aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
-        });
-
-        username = 'TestUser5';
-        password = 'TestPwd135%!';
-        email = 'test@test.edu';
-        code = '268783';
-        
-        // signUp(username, password, email);
-        // confirmSignUp(username, code)
-        signIn(username, password);
-        */
-        
 
         // write the list of decks to the screen
         // first, check if they exist
@@ -304,6 +270,18 @@ app.post('/signup-confirm', (req, res) => {
         res.end();
     }
 })
+
+function user_string() {
+    var base_string = '';
+    if (cur_user == '') {
+        base_string = `<a class="nav-link" href="/login">Login</a>`;
+    } else {
+        base_string =
+        `Logged in as $username: <a class="nav-link" href="/logout">Logout</a>`;
+        base_string = base_string.replace('$username, cur_user');
+    }
+    return base_string;
+}
 
 app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
