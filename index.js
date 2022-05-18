@@ -21,8 +21,13 @@ app.use(express.urlencoded({ extended: true }));
 
 const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
+const { a } = require('aws-amplify');
+const { resolveNaptr } = require('dns');
 const upload = multer({});
 //var upload = multer({ dest: _config.destinationDir })
+
+// handling credentials
+var cur_user = '';
 
 
 
@@ -42,68 +47,77 @@ _handleUpload = (e) => {
 */
 
 app.get('/', (req, res) => {
-    // display default page
-    var htmlsection_start = _fs.readFileSync('htmlsection-start.html', 'utf8');
-    // <!--<input type="file" id="myFile" style="float: left;">-->
-    // <form action="/upload" method="post" enctype="multipart/form-data" >
-    // name="files"
-
-    res.writeHead(200);
-    html = fs.readFileSync('index.html');
-    html = html.toString().replace('$htmlsection', htmlsection_start);
-
-
-    /*
-    // login functionality
-
-    // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
-    aws_amplify.Auth.configure({
-        accessKeyId: awsconfig.accessKeyId,
-        secretAccessKey: awsconfig.secretAccessKey,
-        mandatorySignIn: false,
-        region: awsconfig.region,
-        aws_user_pools_id: awsconfig.aws_user_pools_id,
-        aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
-    });
-
-    username = 'TestUser5';
-    password = 'TestPwd135%!';
-    email = 'test@test.edu';
-    code = '268783';
-    
-    // signUp(username, password, email);
-    // confirmSignUp(username, code)
-    signIn(username, password);
-    */
-    
-
-    // write the list of decks to the screen
-    // first, check if they exist
-    var deckString = '';
-    var deckFolder = './files/decks';
-    fs.readdir(deckFolder, (err, files) => {
-        files.forEach(file => {
-            // console.log(file);
-            if (file.substring(file.length - 4) == '.csv') {
-                deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
-            }
-        });
-      });
-    
-    setTimeout(function() {
-        if (deckString == '') {
-            deckString = '<p>You currently have no decks.</p>';
-        }
-        else {
-            deckString = '<p>Your decks:</p>' + deckString + '<br>';
-        }
-        html = html.replace('$deckList', deckString);
-    
-        res.write(html);
+    // check if user logged in
+    if (cur_user == '') {
+        res.writeHead(200);
+        res.write('<script>window.location.href="/login";</script>');
         res.end();
-    }, 1000);
+    }
 
-    // res.sendFile('index.html', {root: __dirname});
+    else {
+        // display default page
+        var htmlsection_start = _fs.readFileSync('htmlsection-start.html', 'utf8');
+        // <!--<input type="file" id="myFile" style="float: left;">-->
+        // <form action="/upload" method="post" enctype="multipart/form-data" >
+        // name="files"
+
+        //res.writeHead(200);
+        html = fs.readFileSync('index.html');
+        html = html.toString().replace('$htmlsection', htmlsection_start);
+
+
+        /*
+        // login functionality
+
+        // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
+        aws_amplify.Auth.configure({
+            accessKeyId: awsconfig.accessKeyId,
+            secretAccessKey: awsconfig.secretAccessKey,
+            mandatorySignIn: false,
+            region: awsconfig.region,
+            aws_user_pools_id: awsconfig.aws_user_pools_id,
+            aws_user_pools_web_client_id: awsconfig.aws_user_pools_web_client_id
+        });
+
+        username = 'TestUser5';
+        password = 'TestPwd135%!';
+        email = 'test@test.edu';
+        code = '268783';
+        
+        // signUp(username, password, email);
+        // confirmSignUp(username, code)
+        signIn(username, password);
+        */
+        
+
+        // write the list of decks to the screen
+        // first, check if they exist
+        var deckString = '';
+        var deckFolder = './files/decks';
+        fs.readdir(deckFolder, (err, files) => {
+            files.forEach(file => {
+                // console.log(file);
+                if (file.substring(file.length - 4) == '.csv') {
+                    deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
+                }
+            });
+        });
+        
+        setTimeout(function() {
+            if (deckString == '') {
+                deckString = '<p>You currently have no decks.</p>';
+            }
+            else {
+                deckString = '<p>Your decks:</p>' + deckString + '<br>';
+            }
+            html = html.replace('$deckList', deckString);
+        
+            res.write(html);
+            res.end();
+        }, 1000);
+
+        // res.sendFile('index.html', {root: __dirname});
+    }
 });
 
 app.post('/upload', (req, res) => {
@@ -144,6 +158,36 @@ app.post('/upload', (req, res) => {
     python.on('close', (code) => {
         res.write('<script>window.location.href="/";</script>');
     });
+})
+
+app.get('/login', (req, res) => {
+    html = fs.readFileSync('index.html');
+    var htmlsection_login = _fs.readFileSync('htmlsection-login.html', 'utf8');
+    html = html.toString().replace('$htmlsection', htmlsection_login);
+    res.writeHead(200);
+    res.write(html);
+    res.end();
+})
+
+app.post('/login', (req, res) => {
+    res.writeHead(200);
+    console.log('log in');
+    res.end();
+})
+
+app.get('/signup', (req, res) => {
+    html = fs.readFileSync('index.html');
+    var htmlsection_login = _fs.readFileSync('htmlsection-signup.html', 'utf8');
+    html = html.toString().replace('$htmlsection', htmlsection_login);
+    res.writeHead(200);
+    res.write(html);
+    res.end();
+})
+
+app.post('/signup', (req, res) => {
+    res.writeHead(200);
+    console.log('sign up');
+    res.end();
 })
 
 app.listen(port, () => {
