@@ -53,6 +53,7 @@ try {
     */
 } catch {
     aws_working = false;
+    console.log('AWS not working');
 }
 
 
@@ -218,6 +219,8 @@ app.post('/login', (req, res) => {
         try {
             signIn(_username, _password);
             res.writeHead(200);
+            res.write('<script>window.location.href="/";</script>');
+            cur_user = _username;
         }
         catch {
             res.writeHead(404);
@@ -239,10 +242,12 @@ app.get('/signup', (req, res) => {
 app.post('/signup', (req, res) => {
     var _username = '';
     var _password = '';
+    var _email = '';
 
     try {
         _username = req.body.username;
         _password = req.body.password;
+        _email = req.body.email;
     } catch {
         res.writeHead(404);
         res.write('<p>Please provide a username and password');
@@ -253,10 +258,11 @@ app.post('/signup', (req, res) => {
         try {
             signUp(_username, _password, _email);
             res.writeHead(200);
+            res.write('<script>window.location.href="/signup-confirm";</script>');
         }
         catch {
             res.writeHead(404);
-            res.write('<p>Login failed</p>');
+            res.write('<p>Sign up failed</p>');
         }
         res.end();
     }
@@ -286,12 +292,14 @@ app.post('/signup-confirm', (req, res) => {
     
     if (aws_working == true) {
         try {
-            confirmSignUp(username, code);
+            confirmSignUp(_username, _code);
             res.writeHead(200);
+            res.write('<script>window.location.href="/";</script>');
+            cur_user = _username;
         }
         catch {
             res.writeHead(404);
-            res.write('<p>Login failed</p>');
+            res.write('<p>Sign-up failed</p>');
         }
         res.end();
     }
