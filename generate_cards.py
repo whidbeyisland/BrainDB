@@ -16,12 +16,12 @@ import time
 from config import userid
 from query_executor import QueryExecutor
 
-# User Changeable Options
+# User-changeable options
 #
 flashcards_needed = 10 # change for more cards
 default_card_text_file = 'default_card_source.txt'
 
-####
+#-------------------------------------
 
 def get_options():
     deck_name   = ''
@@ -34,10 +34,10 @@ def get_options():
       print('Body or Deck_Name not supplied. Using default name')
       body = load_default_card_text()
 
-    options = dict( body        = body,
-                    deck_name   = deck_name,
-                    path_cwd    = path_cwd,
-                    flashcards_needed = flashcards_needed)
+    options = dict(body        = body,
+                   deck_name   = deck_name,
+                   path_cwd    = path_cwd,
+                   flashcards_needed = flashcards_needed)
     return options 
 
 def load_default_card_text():
@@ -59,8 +59,8 @@ def get_sentences(options):
     #bert_sum = Summarizer(bert_model)
     bert_model_output = bert_model(options['body'], min_length=60, num_sentences=options['flashcards_needed'])
     bert_summary_text = ''.join(bert_model_output)
-    # TODO: handle non-period sentence endings
-    #
+    
+    # coati: handle non-period sentence endings
     bert_summary_sentences = bert_summary_text.split('. ') 
     bert_summary_sentences = [s.rstrip() for s in bert_summary_sentences]
     return bert_summary_sentences
@@ -132,12 +132,11 @@ def find_keyword_in_sentence(sentence, nums_allowed, persons_allowed, places_all
 
   # short words (that don't fall into specific categories e.g. numbers)
   _words = list(filter(lambda w: len(w[0]) >= 5 or w[1] != '', _words))
+
   #-------------------------------------
 
   _keyword = _words[random.randint(0, len(_words) - 1)]
   return _keyword
-
-# print(find_keyword_in_sentence('My name is Wolfgang and I was born in 1990 in Berlin', True, True, True))
 
 # Defining a function to actually cloze out that keyword, which we chose in the above function:
 
@@ -158,7 +157,6 @@ sentences_clozed = []
 for i in range(0, len(bert_summary_sentences)):
   # cloze out the keyword in each sentence
   sentences_clozed.append(sentence_clozed(bert_summary_sentences[i], True, True, True))
-# print(sentences_clozed)
 
 # ----------------------STORAGE---------------------------
 
@@ -174,7 +172,6 @@ print(deck_df)
 q = QueryExecutor()
 
 deck_id_sql = uuid.uuid4()
-# query_string = 'INSERT INTO TestTable VALUES (8)'
 query_string = '''
 INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
   \'%s\',
@@ -186,8 +183,7 @@ INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
 ''' % (deck_id_sql, userid, options['deck_name'])
 q.execute_insert_query(query_string)
 
-# len(sentences_clozed)
-for i in range(0, 5):
+for i in range(0, len(sentences_clozed)):
   try:
     time.sleep(1)
     front = sentences_clozed[i][0]
