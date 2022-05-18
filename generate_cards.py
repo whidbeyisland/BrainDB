@@ -16,68 +16,71 @@ import time
 from config import userid
 from query_executor import QueryExecutor
 
-path_cwd = os.getcwd()
+# User Changeable Options
+#
+flashcards_needed = 10 # change for more cards
+default_card_text_file = 'default_card_source.txt'
 
-body = ''
-deck_name = ''
-try:
-  body = sys.argv[2]
-  deck_name = sys.argv[4]
-except Exception as e:
-  print(e)
-  body = '''
-        Scientists say they have discovered a new species of orangutans on Indonesia’s island of Sumatra.
-  The population differs in several ways from the two existing orangutan species found in Sumatra and the neighboring island of Borneo.
-  The orangutans were found inside North Sumatra’s Batang Toru forest, the science publication Current Biology reported.
-  Researchers named the new species the Tapanuli orangutan. They say the animals are considered a new species because of genetic, skeletal and tooth differences.
-  Michael Kruetzen is a geneticist with the University of Zurich who has studied the orangutans for several years. He said he was excited to be part of the unusual discovery of a new great ape in the present day. He noted that most great apes are currently considered endangered or severely endangered.
-  Gorillas, chimpanzees and bonobos also belong to the great ape species.
-  Orangutan – which means person of the forest in the Indonesian and Malay languages - is the world’s biggest tree-living mammal. The orange-haired animals can move easily among the trees because their arms are longer than their legs. They live more lonely lives than other great apes, spending a lot of time sleeping and eating fruit in the forest.
-  The new study said fewer than 800 of the newly-described orangutans exist. Their low numbers make the group the most endangered of all the great ape species.
-  They live within an area covering about 1,000 square kilometers. The population is considered highly vulnerable. That is because the environment which they depend on is greatly threatened by development.
-  Researchers say if steps are not taken quickly to reduce the current and future threats, the new species could become extinct “within our lifetime.”
-  Research into the new species began in 2013, when an orangutan protection group in Sumatra found an injured orangutan in an area far away from the other species. The adult male orangutan had been beaten by local villagers and died of his injuries. The complete skull was examined by researchers.
-  Among the physical differences of the new species are a notably smaller head and frizzier hair. The Tapanuli orangutans also have a different diet and are found only in higher forest areas.
-  There is no unified international system for recognizing new species. But to be considered, discovery claims at least require publication in a major scientific publication.
-  Russell Mittermeier is head of the primate specialist group at the International Union for the Conservation of Nature. He called the finding a “remarkable discovery.” He said it puts responsibility on the Indonesian government to help the species survive.
-  Matthew Nowak is one of the writers of the study. He told the Associated Press that there are three groups of the Tapanuli orangutans that are separated by non-protected land.He said forest land needs to connect the separated groups.
-  In addition, the writers of the study are recommending that plans for a hydropower center in the area be stopped by the government.
-  It also recommended that remaining forest in the Sumatran area where the orangutans live be protected.
-  I’m Bryan Lynn.
+####
 
-            '''
+def get_options():
+    deck_name   = ''
+    path_cwd = os.getcwd()
 
-# To start with, let's make 10 flashcards.
+    try:
+      body      = sys.argv[2]
+      deck_name = sys.argv[4]
+    except Exception as e:
+      print('Body or Deck_Name not supplied. Using default name')
+      body = load_default_card_text()
 
-sentences_needed = 10
+    options = dict( body        = body,
+                    deck_name   = deck_name,
+                    path_cwd    = path_cwd,
+                    flashcards_needed = flashcards_needed)
+    return options 
+
+def load_default_card_text():
+    with open(default_card_text_file) as f:
+        body = f.read()
+        return body
+
+options = get_options()
 
 # This next block takes 10-20 seconds. Want to speed it up by having the BERT model already loaded, but cannot
 # figure out how to get BERT to accept the pre-saved model. However, this time delay is still improved over the
 # >1 minute that it took before switching to "model='distilbert-base-uncased'"
 
-bert_path = os.path.join(path_cwd, 'pkls', 'bert', 'pytorch_model')
-#bert_model = BertModel.from_pretrained('distilbert-base-uncased')
-#bert_model = BertModel.from_pretrained('distilbert-base-uncased', cache_dir='.cache/')
-bert_model = Summarizer(model='distilbert-base-uncased')
-#bert_sum = Summarizer(bert_model)
+def get_sentences(options):
+    bert_path = os.path.join(options['path_cwd'], 'pkls', 'bert', 'pytorch_model')
+    #bert_model = BertModel.from_pretrained('distilbert-base-uncased')
+    #bert_model = BertModel.from_pretrained('distilbert-base-uncased', cache_dir='.cache/')
+    bert_model = Summarizer(model='distilbert-base-uncased')
+    #bert_sum = Summarizer(bert_model)
+    bert_model_output = bert_model(options['body'], min_length=60, num_sentences=options['flashcards_needed'])
+    bert_summary_text = ''.join(bert_model_output)
+    # TODO: handle non-period sentence endings
+    #
+    bert_summary_sentences = bert_summary_text.split('. ') 
+    bert_summary_sentences = [s.rstrip() for s in bert_summary_sentences]
+    return bert_summary_sentences
 
-bert_summary_text = ''.join(bert_model(body, min_length=60, num_sentences=sentences_needed))
+bert_summary_sentences = get_sentences(options)
 
-bert_summary_sentences = bert_summary_text.split('. ')
-bert_summary_sentences = [sent.rstrip() for sent in bert_summary_sentences]
 for i in range(0, len(bert_summary_sentences) - 1):
   bert_summary_sentences[i] += '.'
+
 bert_summary_sentences_string = '\n'.join(bert_summary_sentences)
 print(bert_summary_sentences_string)
 
 # If the user has not provided a deck name, attempt to set a default one now, based on the first sentence. Otherwise, it
 # has been initialized as a basic Guid.
 
-if deck_name == '':
+if options['deck_name'] == '':
   try:
-    deck_name = bert_summary_sentences[0][:30]
+    options['deck_name'] = bert_summary_sentences[0][:30]
   except:
-    deck_name = uuid.uuid4().hex
+    options['deck_name'] = uuid.uuid4().hex
 
 # From here on out it's faster.
 
@@ -162,7 +165,7 @@ for i in range(0, len(bert_summary_sentences)):
 # Save it all as a DataFrame
 
 deck_df = pd.DataFrame(sentences_clozed, columns = ['Front', 'Back'])
-deck_path = os.path.join(path_cwd, 'files', 'decks', deck_name + '.csv')
+deck_path = os.path.join(options['path_cwd'], 'files', 'decks', options['deck_name'] + '.csv')
 deck_df.to_csv(deck_path)
 print(deck_df)
 
@@ -180,7 +183,7 @@ INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
   GETDATE(),
   GETDATE()
 );
-''' % (deck_id_sql, userid, deck_name)
+''' % (deck_id_sql, userid, options['deck_name'])
 q.execute_insert_query(query_string)
 
 # len(sentences_clozed)
