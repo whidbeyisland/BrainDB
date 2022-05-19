@@ -151,7 +151,7 @@ app.post('/login', (req, res) => {
         _password = req.body.password;
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password');
+        res.write('<p>Please provide a username and password</p>');
         res.end();
     }
     
@@ -194,7 +194,7 @@ app.post('/signup', (req, res) => {
         _email = req.body.email;
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password');
+        res.write('<p>Please provide a username and password</p>');
         res.end();
     }
     
@@ -234,7 +234,7 @@ app.post('/signup-confirm', (req, res) => {
         _code = req.body.code;
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and confirmation code');
+        res.write('<p>Please provide a username and confirmation code</p>');
         res.end();
     }
     
