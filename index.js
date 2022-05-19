@@ -63,53 +63,56 @@ _handleUpload = (e) => {
 */
 
 app.get('/', (req, res) => {
-    // check if user logged in
-    if (1 == 3) {
-        res.writeHead(200);
-        res.write('<script>window.location.href="/login";</script>');
-        res.end();
-    }
+    // <!--<input type="file" id="myFile" style="float: left;">-->
+    // <form action="/upload" method="post" enctype="multipart/form-data" >
+    // name="files"
 
+    res.writeHead(200);
+    html = fs.readFileSync('index.html');
+    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
+    var logged_in_user = fs.readFileSync('logged-in-user.html', 'utf8');
+    var login_link = fs.readFileSync('login-link.html', 'utf8');
+    var htmlsection_start = fs.readFileSync('htmlsection-start.html', 'utf8');
+    if (cur_user != '') {
+        logged_in_user =
+        logged_in_user.toString().replace('$username', cur_user);
+        html_navbar =
+        html_navbar.toString().replace('$userstring', logged_in_user);
+    }
     else {
-        // display default page
-        var htmlsection_start = _fs.readFileSync('htmlsection-start.html', 'utf8');
-        // <!--<input type="file" id="myFile" style="float: left;">-->
-        // <form action="/upload" method="post" enctype="multipart/form-data" >
-        // name="files"
-
-        res.writeHead(200);
-        html = fs.readFileSync('index.html');
-        html = html.toString().replace('$username', user_string());
-        html = html.toString().replace('$htmlsection', htmlsection_start);
-
-        // write the list of decks to the screen
-        // first, check if they exist
-        var deckString = '';
-        var deckFolder = './files/decks';
-        fs.readdir(deckFolder, (err, files) => {
-            files.forEach(file => {
-                // console.log(file);
-                if (file.substring(file.length - 4) == '.csv') {
-                    deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
-                }
-            });
-        });
-        
-        setTimeout(function() {
-            if (deckString == '') {
-                deckString = '<p>You currently have no decks.</p>';
-            }
-            else {
-                deckString = '<p>Your decks:</p>' + deckString + '<br>';
-            }
-            html = html.replace('$deckList', deckString);
-        
-            res.write(html);
-            res.end();
-        }, 1000);
-
-        // res.sendFile('index.html', {root: __dirname});
+        html_navbar =
+        html_navbar.toString().replace('$userstring', login_link);
     }
+    html = html.toString().replace('$navbar', html_navbar);
+    html = html.toString().replace('$htmlsection', htmlsection_start);
+
+    // write the list of decks to the screen
+    // first, check if they exist
+    var deckString = '';
+    var deckFolder = './files/decks';
+    fs.readdir(deckFolder, (err, files) => {
+        files.forEach(file => {
+            // console.log(file);
+            if (file.substring(file.length - 4) == '.csv') {
+                deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
+            }
+        });
+    });
+    
+    setTimeout(function() {
+        if (deckString == '') {
+            deckString = '<p>You currently have no decks.</p>';
+        }
+        else {
+            deckString = '<p>Your decks:</p>' + deckString + '<br>';
+        }
+        html = html.replace('$deckList', deckString);
+    
+        res.write(html);
+        res.end();
+    }, 1000);
+
+    // res.sendFile('index.html', {root: __dirname});
 });
 
 app.post('/upload', (req, res) => {
@@ -129,16 +132,21 @@ app.post('/upload', (req, res) => {
     console.log('Loading, hang tight...');
     const python = spawn(
         'python',
-        ['generate_cards.py',
-        '--myText',
-        _myText,
-        '--deckName',
-        _deckName
+        [
+            'generate_cards.py',
+            '--myText',
+            _myText,
+            '--deckName',
+            _deckName
         ]
     );
 
     html = fs.readFileSync('index.html');
+    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
     var htmlsection_loading = _fs.readFileSync('htmlsection-loading.html', 'utf8');
+    html_navbar =
+        html_navbar.toString().replace('$userstring', '');
+    html = html.toString().replace('$navbar', html_navbar);
     html = html.toString().replace('$htmlsection', htmlsection_loading);
     res.write(html);
 
@@ -154,7 +162,11 @@ app.post('/upload', (req, res) => {
 
 app.get('/login', (req, res) => {
     html = fs.readFileSync('index.html');
+    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
     var htmlsection_login = _fs.readFileSync('htmlsection-login.html', 'utf8');
+    html_navbar =
+        html_navbar.toString().replace('$userstring', '');
+    html = html.toString().replace('$navbar', html_navbar);
     html = html.toString().replace('$htmlsection', htmlsection_login);
     res.writeHead(200);
     res.write(html);
@@ -198,7 +210,11 @@ app.post('/login', (req, res) => {
 
 app.get('/signup', (req, res) => {
     html = fs.readFileSync('index.html');
+    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
     var htmlsection_login = _fs.readFileSync('htmlsection-signup.html', 'utf8');
+    html_navbar =
+        html_navbar.toString().replace('$userstring', '');
+    html = html.toString().replace('$navbar', html_navbar);
     html = html.toString().replace('$htmlsection', htmlsection_login);
     res.writeHead(200);
     res.write(html);
@@ -236,7 +252,11 @@ app.post('/signup', (req, res) => {
 
 app.get('/signup-confirm', (req, res) => {
     html = fs.readFileSync('index.html');
+    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
     var htmlsection_confirm = _fs.readFileSync('htmlsection-confirm.html', 'utf8');
+    html_navbar =
+        html_navbar.toString().replace('$userstring', '');
+    html = html.toString().replace('$navbar', html_navbar);
     html = html.toString().replace('$htmlsection', htmlsection_confirm);
     res.writeHead(200);
     res.write(html);
@@ -271,17 +291,12 @@ app.post('/signup-confirm', (req, res) => {
     }
 })
 
-function user_string() {
-    var base_string = '';
-    if (cur_user == '') {
-        base_string = `<a class="nav-link" href="/login">Login</a>`;
-    } else {
-        base_string =
-        `Logged in as $username: <a class="nav-link" href="/logout">Logout</a>`;
-        base_string = base_string.replace('$username, cur_user');
-    }
-    return base_string;
-}
+app.get('/logout', (req, res) => {
+    cur_user = '';
+    res.writeHead(200);
+    res.write('<script>window.location.href="/";</script>');
+    res.end();
+})
 
 app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
