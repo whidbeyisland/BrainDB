@@ -22,6 +22,7 @@ const upload = multer({});
 
 // login functionality
 var cur_user = '';
+var cur_user_aws_id = '';
 var aws_working = true;
 try {
     // non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
@@ -78,6 +79,9 @@ app.get('/', (req, res) => {
             deckString = '<p>Your decks:</p>' + deckString + '<br>';
         }
         html = html.replace('$deckList', deckString);
+
+        console.log('aws id:');
+        console.log(cur_user_aws_id);
     
         res.write(html);
         res.end();
@@ -157,7 +161,12 @@ app.post('/login', (req, res) => {
     
     if (aws_working == true) {
         try {
-            signIn(_username, _password);
+            var _response = '';
+            signIn(_username, _password).then((response) => _response = response);
+            setTimeout(function() {
+                cur_user_aws_id = _response;
+            }, 3000);
+
             res.writeHead(200);
             res.write('<script>window.location.href="/";</script>');
             cur_user = _username;

@@ -5,6 +5,7 @@ make_donation.py
 config.py
 connect_db_2.py
 connect_db_3.py
+sample-user-cognito.txt
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
