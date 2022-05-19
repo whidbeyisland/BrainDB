@@ -1,7 +1,6 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
-    fs = require('fs'),
-    html = fs.readFileSync('index.html');
+    fs = require('fs');
 
 var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
@@ -11,9 +10,7 @@ var log = function(entry) {
 const express = require('express');
 const multer = require('multer');
 const {spawn} = require('child_process');
-const _fs  = require('fs');
 const aws_amplify = require('aws-amplify');
-const aws_amplify_core = require('@aws-amplify/core');
 const app = express();
 
 app.use(express.json());
@@ -21,10 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 
 const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
-const { a } = require('aws-amplify');
-const { resolveNaptr } = require('dns');
 const upload = multer({});
-//var upload = multer({ dest: _config.destinationDir })
+
+// const { resolveNaptr } = require('dns');
+// const aws_amplify_core = require('@aws-amplify/core');
+// var upload = multer({ dest: _config.destinationDir })
 
 
 
@@ -68,11 +66,11 @@ app.get('/', (req, res) => {
     // name="files"
 
     res.writeHead(200);
-    html = fs.readFileSync('index.html');
-    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
-    var logged_in_user = fs.readFileSync('logged-in-user.html', 'utf8');
-    var login_link = fs.readFileSync('login-link.html', 'utf8');
-    var htmlsection_start = fs.readFileSync('htmlsection-start.html', 'utf8');
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var logged_in_user = fs.readFileSync('html/logged-in-user.html');
+    var login_link = fs.readFileSync('html/login-link.html');
+    var htmlsection_start = fs.readFileSync('html/htmlsection-start.html');
     if (cur_user != '') {
         logged_in_user =
         logged_in_user.toString().replace('$username', cur_user);
@@ -141,9 +139,9 @@ app.post('/upload', (req, res) => {
         ]
     );
 
-    html = fs.readFileSync('index.html');
-    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
-    var htmlsection_loading = _fs.readFileSync('htmlsection-loading.html', 'utf8');
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var htmlsection_loading = fs.readFileSync('html/htmlsection-loading.html');
     html_navbar =
         html_navbar.toString().replace('$userstring', '');
     html = html.toString().replace('$navbar', html_navbar);
@@ -161,9 +159,9 @@ app.post('/upload', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    html = fs.readFileSync('index.html');
-    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
-    var htmlsection_login = _fs.readFileSync('htmlsection-login.html', 'utf8');
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var htmlsection_login = fs.readFileSync('html/htmlsection-login.html');
     html_navbar =
         html_navbar.toString().replace('$userstring', '');
     html = html.toString().replace('$navbar', html_navbar);
@@ -174,13 +172,6 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    /*
-    username = 'TestUser5';
-    password = 'TestPwd135%!';
-    email = 'test@test.edu';
-    code = '268783';
-    */
-
     var _username = '';
     var _password = '';
 
@@ -209,9 +200,9 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/signup', (req, res) => {
-    html = fs.readFileSync('index.html');
-    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
-    var htmlsection_login = _fs.readFileSync('htmlsection-signup.html', 'utf8');
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var htmlsection_login = fs.readFileSync('html/htmlsection-signup.html');
     html_navbar =
         html_navbar.toString().replace('$userstring', '');
     html = html.toString().replace('$navbar', html_navbar);
@@ -251,9 +242,9 @@ app.post('/signup', (req, res) => {
 })
 
 app.get('/signup-confirm', (req, res) => {
-    html = fs.readFileSync('index.html');
-    var html_navbar = fs.readFileSync('navbar.html', 'utf8');
-    var htmlsection_confirm = _fs.readFileSync('htmlsection-confirm.html', 'utf8');
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var htmlsection_confirm = fs.readFileSync('html/htmlsection-confirm.html');
     html_navbar =
         html_navbar.toString().replace('$userstring', '');
     html = html.toString().replace('$navbar', html_navbar);
