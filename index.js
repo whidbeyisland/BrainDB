@@ -20,17 +20,11 @@ const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 
-// const { resolveNaptr } = require('dns');
-// const aws_amplify_core = require('@aws-amplify/core');
-// var upload = multer({ dest: _config.destinationDir })
-
-
-
 // login functionality
 var cur_user = '';
 var aws_working = true;
 try {
-    // coati: non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
+    // non-standard usage of awsconfig --- typically the entire module is imported into Auth.configure()
     aws_amplify.Auth.configure({
         accessKeyId: awsconfig.accessKeyId,
         secretAccessKey: awsconfig.secretAccessKey,
@@ -44,27 +38,7 @@ try {
     console.log('AWS not working');
 }
 
-
-// coati: future support for uploading PDFs
-/*
-_handleUpload = (e) => {
-    console.log('got here');
-    const dataForm = new FormData();
-    dataForm.append('file', e.target.files[0]);  
-      axios
-        .post('http://localhost:' + port + '/upload', dataForm)
-        .then(res => {
-
-        })
-        .catch(err => console.log(err));      
-}
-*/
-
 app.get('/', (req, res) => {
-    // <!--<input type="file" id="myFile" style="float: left;">-->
-    // <form action="/upload" method="post" enctype="multipart/form-data" >
-    // name="files"
-
     res.writeHead(200);
     var html = fs.readFileSync('html/index.html');
     var html_navbar = fs.readFileSync('html/navbar.html');
@@ -90,7 +64,6 @@ app.get('/', (req, res) => {
     var deckFolder = './files/decks';
     fs.readdir(deckFolder, (err, files) => {
         files.forEach(file => {
-            // console.log(file);
             if (file.substring(file.length - 4) == '.csv') {
                 deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
             }
@@ -109,8 +82,6 @@ app.get('/', (req, res) => {
         res.write(html);
         res.end();
     }, 1000);
-
-    // res.sendFile('index.html', {root: __dirname});
 });
 
 app.post('/upload', (req, res) => {
