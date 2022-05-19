@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const { signUp, confirmSignUp, signIn } = require('./auth-funcs');
+const { signUp, confirmSignUp, signIn, signOut } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
 const upload = multer({});
 
@@ -254,9 +254,20 @@ app.post('/signup-confirm', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
+    if (aws_working == true) {
+        try {
+            signOut();
+            res.writeHead(200);
+            res.write('<script>window.location.href="/";</script>');
+            cur_user = '';
+        }
+        catch {
+            res.writeHead(404);
+            res.write('<p>Sign-out failed</p>');
+        }
+        res.end();
+    }
     cur_user = '';
-    res.writeHead(200);
-    res.write('<script>window.location.href="/";</script>');
     res.end();
 })
 

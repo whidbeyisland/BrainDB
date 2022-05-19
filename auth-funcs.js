@@ -33,4 +33,12 @@ async function signIn(username, password) {
     }
 }
 
-module.exports = { signUp, confirmSignUp, signIn };
+async function signOut() {
+    try {
+        await aws_amplify.Auth.signOut();
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
+}
+
+module.exports = { signUp, confirmSignUp, signIn, signOut };
