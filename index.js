@@ -114,13 +114,8 @@ app.post('/upload', (req, res) => {
         ]
     );
 
-    var html = fs.readFileSync('html/index.html');
-    var html_navbar = fs.readFileSync('html/navbar.html');
-    var htmlsection_loading = fs.readFileSync('html/htmlsection-loading.html');
-    html_navbar =
-        html_navbar.toString().replace('$userstring', '');
-    html = html.toString().replace('$navbar', html_navbar);
-    html = html.toString().replace('$htmlsection', htmlsection_loading);
+    // loading screen while Python script runs
+    var html = generateHTMLString('html/htmlsection-loading.html');
     res.write(html);
 
     // collect data from script
@@ -134,13 +129,7 @@ app.post('/upload', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    var html = fs.readFileSync('html/index.html');
-    var html_navbar = fs.readFileSync('html/navbar.html');
-    var htmlsection_login = fs.readFileSync('html/htmlsection-login.html');
-    html_navbar =
-        html_navbar.toString().replace('$userstring', '');
-    html = html.toString().replace('$navbar', html_navbar);
-    html = html.toString().replace('$htmlsection', htmlsection_login);
+    var html = generateHTMLString('html/htmlsection-login.html');
     res.writeHead(200);
     res.write(html);
     res.end();
@@ -180,13 +169,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/signup', (req, res) => {
-    var html = fs.readFileSync('html/index.html');
-    var html_navbar = fs.readFileSync('html/navbar.html');
-    var htmlsection_login = fs.readFileSync('html/htmlsection-signup.html');
-    html_navbar =
-        html_navbar.toString().replace('$userstring', '');
-    html = html.toString().replace('$navbar', html_navbar);
-    html = html.toString().replace('$htmlsection', htmlsection_login);
+    var html = generateHTMLString('html/htmlsection-signup.html');
     res.writeHead(200);
     res.write(html);
     res.end();
@@ -222,13 +205,7 @@ app.post('/signup', (req, res) => {
 })
 
 app.get('/signup-confirm', (req, res) => {
-    var html = fs.readFileSync('html/index.html');
-    var html_navbar = fs.readFileSync('html/navbar.html');
-    var htmlsection_confirm = fs.readFileSync('html/htmlsection-confirm.html');
-    html_navbar =
-        html_navbar.toString().replace('$userstring', '');
-    html = html.toString().replace('$navbar', html_navbar);
-    html = html.toString().replace('$htmlsection', htmlsection_confirm);
+    var html = generateHTMLString('html/htmlsection-confirm.html');
     res.writeHead(200);
     res.write(html);
     res.end();
@@ -280,6 +257,19 @@ app.get('/logout', (req, res) => {
     res.end();
 })
 
+function generateHTMLString(htmlsection_path) {
+    var html = fs.readFileSync('html/index.html');
+    var html_navbar = fs.readFileSync('html/navbar.html');
+    var htmlsection = fs.readFileSync(htmlsection_path);
+    html_navbar =
+        html_navbar.toString().replace('$userstring', '');
+    html = html.toString().replace('$navbar', html_navbar);
+    html = html.toString().replace('$htmlsection', htmlsection);
+    return html;
+}
+
 app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
 });
+
+module.exports = { generateHTMLString };
