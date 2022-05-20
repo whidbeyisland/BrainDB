@@ -280,6 +280,12 @@ app.get('/logout', (req, res) => {
     res.end();
 })
 
+function testFunc(num) {
+    return num + 1;
+}
+
 app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
 });
+
+module.exports = { testFunc };
