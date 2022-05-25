@@ -79,9 +79,6 @@ app.get('/', (req, res) => {
             deckString = '<p>Your decks:</p>' + deckString + '<br>';
         }
         html = html.replace('$deckList', deckString);
-
-        //console.log('aws id:');
-        //console.log(cur_user_aws_id);
     
         res.write(html);
         res.end();
