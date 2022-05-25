@@ -79,9 +79,6 @@ app.get('/', (req, res) => {
             deckString = '<p>Your decks:</p>' + deckString + '<br>';
         }
         html = html.replace('$deckList', deckString);
-
-        console.log('aws id:');
-        console.log(cur_user_aws_id);
     
         res.write(html);
         res.end();
@@ -110,7 +107,9 @@ app.post('/upload', (req, res) => {
             '--myText',
             _myText,
             '--deckName',
-            _deckName
+            _deckName,
+            '--username',
+            cur_user_aws_id
         ]
     );
 
@@ -150,11 +149,11 @@ app.post('/login', (req, res) => {
     
     if (aws_working == true) {
         try {
-            var _response = '';
-            signIn(_username, _password).then((response) => _response = response);
-            setTimeout(function() {
-                cur_user_aws_id = _response;
-            }, 3000);
+            signIn(_username, _password).then(result => {
+                cur_user_aws_id = result;
+                console.log('AWS id:');
+                console.log(cur_user_aws_id);
+            });
 
             res.writeHead(200);
             res.write('<script>window.location.href="/";</script>');

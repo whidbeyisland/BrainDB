@@ -13,7 +13,7 @@ import pandas as pd
 import uuid
 import time
 
-from config import userid
+from config import userid_default
 from query_executor import QueryExecutor
 
 # User-changeable options
@@ -24,18 +24,32 @@ default_card_text_file = 'default_card_source.txt'
 #-------------------------------------
 
 def get_options():
-    deck_name   = ''
     path_cwd = os.getcwd()
 
     try:
       body      = sys.argv[2]
+    except Exception as e:
+      print('Body text not supplied. Using default text')
+      body = load_default_card_text()
+    
+    try:
       deck_name = sys.argv[4]
     except Exception as e:
-      print('Body or Deck_Name not supplied. Using default name')
-      body = load_default_card_text()
+      print('Deck name not supplied. Using default name')
+      deck_name = ''
+    
+    try:
+      userid    = sys.argv[6]
+      if userid == '':
+        print('Not logged in. Storing cards to default user instead')
+        userid = userid_default
+    except Exception as e:
+      print('Not logged in. Storing cards to default user instead')
+      userid = userid_default
 
     options = dict(body        = body,
                    deck_name   = deck_name,
+                   userid      = userid,
                    path_cwd    = path_cwd,
                    flashcards_needed = flashcards_needed)
     return options 
@@ -167,7 +181,7 @@ deck_path = os.path.join(options['path_cwd'], 'files', 'decks', options['deck_na
 deck_df.to_csv(deck_path)
 print(deck_df)
 
-# Also store deck on RDS SQL Server instance
+# Store deck on RDS SQL Server instance
 
 q = QueryExecutor()
 
@@ -180,7 +194,7 @@ INSERT INTO Decks (Id, UserId, DeckName, CreatedDate, ModifiedDate) VALUES (
   GETDATE(),
   GETDATE()
 );
-''' % (deck_id_sql, userid, options['deck_name'])
+''' % (deck_id_sql, options['userid'], options['deck_name'])
 q.execute_insert_query(query_string)
 
 for i in range(0, len(sentences_clozed)):

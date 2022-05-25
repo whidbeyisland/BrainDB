@@ -1,4 +1,5 @@
 const aws_amplify = require('aws-amplify');
+const res = require('express/lib/response');
 
 async function signUp(username, password, email) {
     try {
@@ -6,8 +7,7 @@ async function signUp(username, password, email) {
             username,
             password,
             attributes: {
-                email,
-                //phone_number
+                email
             }
         });
         console.log(user);
