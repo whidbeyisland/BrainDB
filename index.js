@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const { signUp, confirmSignUp, signIn, signOut } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
+const { response } = require('express');
 const upload = multer({});
 
 // login functionality
@@ -79,13 +80,15 @@ app.get('/', (req, res) => {
             deckString = '<p>Your decks:</p>' + deckString + '<br>';
         }
         html = html.replace('$deckList', deckString);
-
-        console.log('aws id:');
-        console.log(cur_user_aws_id);
     
         res.write(html);
         res.end();
     }, 1000);
+
+    setTimeout(function() {
+        console.log('aws id:');
+        console.log(cur_user_aws_id);
+    }, 2000);
 });
 
 app.post('/upload', (req, res) => {
@@ -143,6 +146,7 @@ app.post('/login', (req, res) => {
         _username = req.body.username;
         _password = req.body.password;
     } catch {
+        console.log(res.body);
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
         res.end();
@@ -151,14 +155,30 @@ app.post('/login', (req, res) => {
     if (aws_working == true) {
         try {
             var _response = '';
-            signIn(_username, _password).then((response) => _response = response);
-            setTimeout(function() {
-                cur_user_aws_id = _response;
-            }, 3000);
+            signIn(_username, _password)
+            .then((response) => _response = response)
+            .then(console.log(response))
+            .then(console.log('got here 1'));
 
+            /*
+            signIn(_username, _password).then(
+                setTimeout(function() {
+                    cur_user_aws_id = response.;
+                    cur_user = _username;
+                }, 2000)
+            ).then(
+                res.writeHead(200)
+            ).then(
+                res.write('<script>window.location.href="/";</script>')
+            );
+            */
+            
             res.writeHead(200);
             res.write('<script>window.location.href="/";</script>');
             cur_user = _username;
+            
+            //cur_user_aws_id = _response;
+            
         }
         catch {
             res.writeHead(404);

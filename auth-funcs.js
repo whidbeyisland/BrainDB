@@ -1,4 +1,22 @@
 const aws_amplify = require('aws-amplify');
+const res = require('express/lib/response');
+
+/*
+async function signUp(username, password, email) {
+    const user = await aws_amplify.Auth.signUp({
+            username,
+            password,
+            attributes: {
+                email
+            }
+    });
+    const jsonResponse = await user.json();
+    if (!jsonResponse) {
+        return [];
+    }
+    return jsonResponse;
+}
+*/
 
 async function signUp(username, password, email) {
     try {
@@ -34,6 +52,26 @@ async function signIn(username, password) {
         return '';
     }
 }
+/*
+
+async function signIn(username, password) {
+    //const user = await aws_amplify.Auth.signIn(username, password);
+    await aws_amplify.Auth.signIn(username, password)
+    .then(res => {
+        console.log(res); 
+        console.log(res.status);       
+
+        if (res.status == 200) {
+            return res.json();
+        } else {
+            console.log('got here');
+            throw new Error(res.status);
+        }
+        
+    });
+    return res;
+}
+*/
 
 async function signOut() {
     try {
