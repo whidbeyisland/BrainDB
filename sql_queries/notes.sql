@@ -1,1 +1,1 @@
-INSERT INTO notes VALUES($nid,'$guid',$curModel,$mod,-1,' created-with-braindb ','$front$back','$front',$csum,0,'');
+INSERT INTO notes VALUES($sql_nid,'$sql_guid',$sql_curModel,$sql_mod,-1,' created-with-braindb ','$sql_front$sql_back','$sql_front',$sql_csum,0,'');
