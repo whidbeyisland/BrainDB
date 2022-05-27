@@ -1,0 +1,2 @@
+INSERT INTO notes VALUES(1653683561708,'eB[BHB5POk',1376926904739,1653683561,-1,' created-with-braindb ','(Front)(Back)','(Front)',4251924563,0,'');
+INSERT INTO notes VALUES(1653683567089,'i/!cN}k~:}',1376926904739,1653683567,-1,' created-with-braindb ','(Front 2)(Back 2)','(Front 2)',945259959,0,'');
