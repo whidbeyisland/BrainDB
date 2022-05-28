@@ -1,6 +1,6 @@
-sql_id = 1653683561709
-sql_nid = 1653683561708
-sql_did = 1653683537446
+sql_id = 1653683561709 # card id
+sql_nid = 1653683561708 # note id
+sql_did = 1653683537446 # deck id
 sql_mod = 1653683561
 sql_due = 29355
 sql_crt = 1442476800

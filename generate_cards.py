@@ -23,6 +23,7 @@ default_card_text_file = 'default_card_source.txt'
 # temp list of cards --- should be accessible from other scripts e.g.
 # anki_sqlite.py (for saving to SQLite db)
 temp_card_list = []
+temp_deck_name = ''
 
 #-------------------------------------
 
@@ -40,6 +41,7 @@ def get_options():
     except Exception as e:
       print('Deck name not supplied. Using default name')
       deck_name = ''
+    temp_deck_name = deck_name
     
     try:
       userid    = sys.argv[6]
@@ -220,6 +222,9 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
   except Exception as e:
     print(e)
 
+
+
+# coati: anki_sqlite.py will be called with the "temp" variables set in this file
 temp_card_list = sentences_clozed.copy()
 
 print('Backed up to Amazon RDS')
