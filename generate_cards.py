@@ -16,10 +16,13 @@ import time
 from config import userid_default
 from query_executor import QueryExecutor
 
-# User-changeable options
-#
+# user-changeable options
 flashcards_needed = 10 # change for more cards
 default_card_text_file = 'default_card_source.txt'
+
+# temp list of cards --- should be accessible from other scripts e.g.
+# anki_sqlite.py (for saving to SQLite db)
+temp_card_list = []
 
 #-------------------------------------
 
@@ -216,5 +219,7 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
     q.execute_insert_query(query_string)
   except Exception as e:
     print(e)
+
+temp_card_list = sentences_clozed.copy()
 
 print('Backed up to Amazon RDS')
