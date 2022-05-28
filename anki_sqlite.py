@@ -3,7 +3,9 @@ import time
 import sqlite3
 import random
 import query_params
-from generate_cards import temp_card_list, temp_deck_name
+import time
+# from generate_cards import temp_card_list, temp_deck_name
+temp_card_list, temp_deck_name = [], ''
 
 path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
@@ -17,6 +19,7 @@ if temp_deck_name == '':
     temp_deck_name = 'New Deck ' + str(random.randint(0, 1e6 - 1))
 
 try:
+    print('Connecting to SQLite...')
     con = sqlite3.connect(path_anki_db)
     cur = con.cursor()
 
@@ -35,6 +38,7 @@ try:
         query_notes = file.read()
     
     # generate random id params that will be used throughout the main query
+    print('Preparing to insert into SQLite, hang tight...')
     sql_did = random.randint(1.6e12, 1.7e12 - 1)
     sql_deckName = temp_deck_name
     sql_curModel = random.randint(1.3e12, 1.4e12 - 1)
@@ -42,16 +46,17 @@ try:
     sql_crt = random.randint(1.4e9, 1.5e9 - 1)
 
     # add query segment for "col"
-    query_col = query_col.replace('$sql_did', sql_did)
+    query_col = query_col.replace('$sql_did', str(sql_did))
     query_col = query_col.replace('$sql_deckName', sql_deckName)
-    query_col = query_col.replace('$sql_curModel', sql_curModel)
-    query_col = query_col.replace('$sql_mod', sql_mod)
-    query_col = query_col.replace('$sql_crt', sql_crt)
+    query_col = query_col.replace('$sql_curModel', str(sql_curModel))
+    query_col = query_col.replace('$sql_mod', str(sql_mod))
+    query_col = query_col.replace('$sql_crt', str(sql_crt))
 
     # add query segments for each card and each note
     queries_cards = []
     queries_notes = []
     for i in range(0, len(temp_card_list)):
+        print('Inserting card #%s into SQLite...' % str(i + 1))
         _query_cards = query_cards
 
         _sql_id = random.randint(1.6e12, 1.7e12 - 1) # card id
@@ -77,6 +82,8 @@ try:
 
         queries_cards.append(_query_cards)
 
+        _query_notes = query_notes
+
         _query_notes = _query_notes.replace('$sql_did', str(sql_did))
         _query_notes = _query_notes.replace('$sql_deckName', str(sql_deckName))
         _query_notes = _query_notes.replace('$sql_curModel', str(sql_curModel))
@@ -99,8 +106,8 @@ try:
     query_full = query_full.replace('$col.sql', query_col)
     query_full = query_full.replace('$notes.sql', queries_notes_str)
 
+    print('Finishing insertion into SQLite...')
     cur.execute(query_full)
-    print('Successfully generated deck!')
+    print('Successfully stored deck!')
 except Exception as e:
     print(e)
-    print('One or more SQL query file(s) could not be loaded')
