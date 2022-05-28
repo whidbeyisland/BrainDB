@@ -7,6 +7,8 @@ connect_db_2.py
 connect_db_3.py
 anki_sqlite_generic.py
 sample-user-cognito.txt
+__pycache__/
+node-modules/
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
