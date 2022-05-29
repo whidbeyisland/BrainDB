@@ -9,7 +9,7 @@ temp_card_list, temp_deck_name = [], ''
 
 path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
-path_anki_db = os.path.join(path_anki, 'user-deck-card-info-03.db')
+path_anki_db = os.path.join(path_anki, 'user-deck-card-info-04.db')
 
 # temp variables, should be grabbed from generate_cards.py
 if len(temp_card_list) == 0:
@@ -63,7 +63,6 @@ try:
 
         _sql_id = random.randint(1.6e12, 1.7e12 - 1) # card id
         _sql_nid = random.randint(1.6e12, 1.7e12 - 1)
-        _sql_colid = random.randint(1.6e12, 1.7e12 - 1)
         _sql_guid = random.randint(1e9, 1e10 - 1)
         _sql_front = temp_card_list[i][0]
         _sql_back = temp_card_list[i][1]
@@ -77,7 +76,6 @@ try:
         _query_segments_5 = _query_segments_5.replace('$sql_mod', str(sql_mod))
         _query_segments_5 = _query_segments_5.replace('$sql_due', str(sql_due))
         _query_segments_5 = _query_segments_5.replace('$sql_crt', str(sql_crt))
-        _query_segments_5 = _query_segments_5.replace('$sql_colid', str(_sql_colid))
         _query_segments_5 = _query_segments_5.replace('$sql_guid', str(_sql_guid))
         _query_segments_5 = _query_segments_5.replace('$sql_front', _sql_front)
         _query_segments_5 = _query_segments_5.replace('$sql_back', _sql_back)
@@ -95,7 +93,6 @@ try:
         _query_segments_7 = _query_segments_7.replace('$sql_mod', str(sql_mod))
         _query_segments_7 = _query_segments_7.replace('$sql_due', str(sql_due))
         _query_segments_7 = _query_segments_7.replace('$sql_crt', str(sql_crt))
-        _query_segments_7 = _query_segments_7.replace('$sql_colid', str(_sql_colid))
         _query_segments_7 = _query_segments_7.replace('$sql_guid', str(_sql_guid))
         _query_segments_7 = _query_segments_7.replace('$sql_front', _sql_front)
         _query_segments_7 = _query_segments_7.replace('$sql_back', _sql_back)
