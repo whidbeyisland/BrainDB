@@ -15,6 +15,7 @@ import time
 
 from config import userid_default
 from query_executor import QueryExecutor
+from anki_deck_file_writer import AnkiDeckFileWriter
 
 # user-changeable options
 flashcards_needed = 10 # change for more cards
@@ -207,8 +208,10 @@ for i in range(0, len(sentences_clozed)):
     time.sleep(1)
     front = sentences_clozed[i][0]
     front.replace('\'', '\\\'')
+    front.replace('\"', '\\\"')
     back = sentences_clozed[i][1]
     back.replace('\'', '\\\'')
+    back.replace('\"', '\\\"')
     query_string = '''
 INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
   \'%s\',
@@ -222,9 +225,8 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
   except Exception as e:
     print(e)
 
-
-
-# coati: anki_sqlite.py will be called with the "temp" variables set in this file
-temp_card_list = sentences_clozed.copy()
-
 print('Backed up to Amazon RDS')
+
+# back up deck in local Anki pkg file
+w = AnkiDeckFileWriter()
+w.write_anki_deck(sentences_clozed, options['deck_name'])
