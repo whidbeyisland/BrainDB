@@ -1,0 +1,1 @@
+ANALYZE sqlite_schema;

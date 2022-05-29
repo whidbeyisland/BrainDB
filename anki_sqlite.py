@@ -23,19 +23,14 @@ try:
     con = sqlite3.connect(path_anki_db)
     cur = con.cursor()
 
-    # grab main query file, and secondary scripts for query segments
-    query_full = ''
-    query_cards = ''
-    query_col = ''
-    query_notes = ''
-    with open('sql_queries/create-deck.sql', 'r') as file:
-        query_full = file.read()
-    with open('sql_queries/cards.sql', 'r') as file:
-        query_cards = file.read()
-    with open('sql_queries/col.sql', 'r') as file:
-        query_col = file.read()
-    with open('sql_queries/notes.sql', 'r') as file:
-        query_notes = file.read()
+    # collect all query segments that will be used --- SQLite only allows executing
+    # one ";" statement at a time
+    query_segments = []
+    for i in range(1, 22):
+        _query_path = 'sql_queries/create-deck-%s.sql' % str(i).zfill(2)
+        with open(_query_path, 'r') as file:
+            _query_string = file.read()
+            query_segments.append(_query_string)
     
     # generate random id params that will be used throughout the main query
     print('Preparing to insert into SQLite, hang tight...')
@@ -46,18 +41,20 @@ try:
     sql_crt = random.randint(1.4e9, 1.5e9 - 1)
 
     # add query segment for "col"
-    query_col = query_col.replace('$sql_did', str(sql_did))
-    query_col = query_col.replace('$sql_deckName', sql_deckName)
-    query_col = query_col.replace('$sql_curModel', str(sql_curModel))
-    query_col = query_col.replace('$sql_mod', str(sql_mod))
-    query_col = query_col.replace('$sql_crt', str(sql_crt))
+    query_segments_3 = query_segments[3]
+    query_segments_3 = query_segments_3.replace('$sql_did', str(sql_did))
+    query_segments_3 = query_segments_3.replace('$sql_deckName', sql_deckName)
+    query_segments_3 = query_segments_3.replace('$sql_curModel', str(sql_curModel))
+    query_segments_3 = query_segments_3.replace('$sql_mod', str(sql_mod))
+    query_segments_3 = query_segments_3.replace('$sql_crt', str(sql_crt))
+    query_segments[3] = query_segments_3
 
-    # add query segments for each card and each note
-    queries_cards = []
-    queries_notes = []
+    # create a list containing individual query segments for each card and each note
+    query_segments_5 = [] # card
+    query_segments_7 = [] # note
     for i in range(0, len(temp_card_list)):
         print('Inserting card #%s into SQLite...' % str(i + 1))
-        _query_cards = query_cards
+        _query_segments_5 = query_segments[5]
 
         _sql_id = random.randint(1.6e12, 1.7e12 - 1) # card id
         _sql_nid = random.randint(1.6e12, 1.7e12 - 1)
@@ -67,47 +64,51 @@ try:
         _sql_back = temp_card_list[i][1]
         _sql_csum = random.randint(4.2e9, 4.3e9 - 1)
 
-        _query_cards = _query_cards.replace('$sql_did', str(sql_did))
-        _query_cards = _query_cards.replace('$sql_deckName', str(sql_deckName))
-        _query_cards = _query_cards.replace('$sql_curModel', str(sql_curModel))
-        _query_cards = _query_cards.replace('$sql_id', str(_sql_id))
-        _query_cards = _query_cards.replace('$sql_nid', str(_sql_nid))
-        _query_cards = _query_cards.replace('$sql_mod', str(sql_mod))
-        _query_cards = _query_cards.replace('$sql_crt', str(sql_crt))
-        _query_cards = _query_cards.replace('$sql_colid', str(_sql_colid))
-        _query_cards = _query_cards.replace('$sql_guid', str(_sql_guid))
-        _query_cards = _query_cards.replace('$sql_front', _sql_front)
-        _query_cards = _query_cards.replace('$sql_back', _sql_back)
-        _query_cards = _query_cards.replace('$sql_csum', str(_sql_csum))
+        _query_segments_5 = _query_segments_5.replace('$sql_did', str(sql_did))
+        _query_segments_5 = _query_segments_5.replace('$sql_deckName', str(sql_deckName))
+        _query_segments_5 = _query_segments_5.replace('$sql_curModel', str(sql_curModel))
+        _query_segments_5 = _query_segments_5.replace('$sql_id', str(_sql_id))
+        _query_segments_5 = _query_segments_5.replace('$sql_nid', str(_sql_nid))
+        _query_segments_5 = _query_segments_5.replace('$sql_mod', str(sql_mod))
+        _query_segments_5 = _query_segments_5.replace('$sql_crt', str(sql_crt))
+        _query_segments_5 = _query_segments_5.replace('$sql_colid', str(_sql_colid))
+        _query_segments_5 = _query_segments_5.replace('$sql_guid', str(_sql_guid))
+        _query_segments_5 = _query_segments_5.replace('$sql_front', _sql_front)
+        _query_segments_5 = _query_segments_5.replace('$sql_back', _sql_back)
+        _query_segments_5 = _query_segments_5.replace('$sql_csum', str(_sql_csum))
 
-        queries_cards.append(_query_cards)
+        query_segments_5.append(_query_segments_5)
 
-        _query_notes = query_notes
+        _query_segments_7 = query_segments_7
 
-        _query_notes = _query_notes.replace('$sql_did', str(sql_did))
-        _query_notes = _query_notes.replace('$sql_deckName', str(sql_deckName))
-        _query_notes = _query_notes.replace('$sql_curModel', str(sql_curModel))
-        _query_notes = _query_notes.replace('$sql_id', str(_sql_id))
-        _query_notes = _query_notes.replace('$sql_nid', str(_sql_nid))
-        _query_notes = _query_notes.replace('$sql_mod', str(sql_mod))
-        _query_notes = _query_notes.replace('$sql_crt', str(sql_crt))
-        _query_notes = _query_notes.replace('$sql_colid', str(_sql_colid))
-        _query_notes = _query_notes.replace('$sql_guid', str(_sql_guid))
-        _query_notes = _query_notes.replace('$sql_front', _sql_front)
-        _query_notes = _query_notes.replace('$sql_back', _sql_back)
-        _query_notes = _query_notes.replace('$sql_csum', str(_sql_csum))
+        _query_segments_7 = _query_segments_7.replace('$sql_did', str(sql_did))
+        _query_segments_7 = _query_segments_7.replace('$sql_deckName', str(sql_deckName))
+        _query_segments_7 = _query_segments_7.replace('$sql_curModel', str(sql_curModel))
+        _query_segments_7 = _query_segments_7.replace('$sql_id', str(_sql_id))
+        _query_segments_7 = _query_segments_7.replace('$sql_nid', str(_sql_nid))
+        _query_segments_7 = _query_segments_7.replace('$sql_mod', str(sql_mod))
+        _query_segments_7 = _query_segments_7.replace('$sql_crt', str(sql_crt))
+        _query_segments_7 = _query_segments_7.replace('$sql_colid', str(_sql_colid))
+        _query_segments_7 = _query_segments_7.replace('$sql_guid', str(_sql_guid))
+        _query_segments_7 = _query_segments_7.replace('$sql_front', _sql_front)
+        _query_segments_7 = _query_segments_7.replace('$sql_back', _sql_back)
+        _query_segments_7 = _query_segments_7.replace('$sql_csum', str(_sql_csum))
 
-        queries_notes.append(_query_notes)
-    queries_cards_str = '\n'.join(queries_cards)
-    queries_notes_str = '\n'.join(queries_notes)
+        query_segments_7.append(_query_segments_7)
 
-    # put all query segments back into the main query
-    query_full = query_full.replace('$cards.sql', queries_cards_str)
-    query_full = query_full.replace('$col.sql', query_col)
-    query_full = query_full.replace('$notes.sql', queries_notes_str)
-
-    print('Finishing insertion into SQLite...')
-    cur.execute(query_full)
+    # execute all queries in order
+    for i in range(0, len(query_segments)):
+        print('Executing query #%s...', str(i))
+        # SQLite can only execute one ";" transaction at a time, so the query segments
+        # for adding *each* card and *each* note must be executed individually
+        if i == 5: # cards
+            for j in range(0, len(query_segments_5)):
+                cur.execute(query_segments_5[j])
+        elif i == 7: # notes
+            for j in range(0, len(query_segments_7)):
+                cur.execute(query_segments_7[j])
+        else:
+            cur.execute(query_segments[i])
     print('Successfully stored deck!')
 except Exception as e:
     print(e)

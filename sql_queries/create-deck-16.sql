@@ -1,0 +1,1 @@
+CREATE INDEX ix_revlog_usn on revlog (usn);

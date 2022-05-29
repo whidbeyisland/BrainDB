@@ -1,0 +1,1 @@
+INSERT INTO sqlite_stat1 VALUES('col',NULL,'1');
