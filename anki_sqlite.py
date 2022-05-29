@@ -9,7 +9,7 @@ temp_card_list, temp_deck_name = [], ''
 
 path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
-path_anki_db = os.path.join(path_anki, 'user-deck-card-info.db')
+path_anki_db = os.path.join(path_anki, 'user-deck-card-info-02.db')
 
 # temp variables, should be grabbed from generate_cards.py
 if len(temp_card_list) == 0:
@@ -29,7 +29,8 @@ try:
     for i in range(1, 22):
         _query_path = 'sql_queries/create-deck-%s.sql' % str(i).zfill(2)
         with open(_query_path, 'r') as file:
-            _query_string = file.read()
+            _query_string_lines = file.readlines()
+            _query_string = '\n'.join(_query_string_lines)
             query_segments.append(_query_string)
     
     # generate random id params that will be used throughout the main query
@@ -52,6 +53,7 @@ try:
     # create a list containing individual query segments for each card and each note
     query_segments_5 = [] # card
     query_segments_7 = [] # note
+
     for i in range(0, len(temp_card_list)):
         print('Inserting card #%s into SQLite...' % str(i + 1))
         _query_segments_5 = query_segments[5]
@@ -79,7 +81,7 @@ try:
 
         query_segments_5.append(_query_segments_5)
 
-        _query_segments_7 = query_segments_7
+        _query_segments_7 = query_segments[7]
 
         _query_segments_7 = _query_segments_7.replace('$sql_did', str(sql_did))
         _query_segments_7 = _query_segments_7.replace('$sql_deckName', str(sql_deckName))
@@ -98,9 +100,10 @@ try:
 
     # execute all queries in order
     for i in range(0, len(query_segments)):
-        print('Executing query #%s...', str(i))
+        print('Executing query #%s...' % str(i + 1))
         # SQLite can only execute one ";" transaction at a time, so the query segments
         # for adding *each* card and *each* note must be executed individually
+        print(query_segments[i])
         if i == 5: # cards
             for j in range(0, len(query_segments_5)):
                 cur.execute(query_segments_5[j])
