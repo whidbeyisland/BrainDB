@@ -9,7 +9,7 @@ temp_card_list, temp_deck_name = [], ''
 
 path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
-path_anki_db = os.path.join(path_anki, 'user-deck-card-info-02.db')
+path_anki_db = os.path.join(path_anki, 'user-deck-card-info-03.db')
 
 # temp variables, should be grabbed from generate_cards.py
 if len(temp_card_list) == 0:
@@ -105,25 +105,25 @@ try:
 
     # execute all queries in order
     for i in range(0, len(query_segments)):
-        print('Executing query #%s...' % str(i + 1))
+        if i in [10, 11, 12]:
+            pass
         # SQLite can only execute one ";" transaction at a time, so the query segments
         # for adding *each* card and *each* note must be executed individually
-        # if i == 3:
-        #     cur.execute(
-        #         'INSERT INTO col VALUES();',
-        #         ('''1,1442476800,1653683608168,1653683608163,11,0,0,0,'{"schedVer":1,"sortBackwards":false,"nextPos":1,"newSpread":0,"addToCur":true,"estTimes":true,"collapseTime":1200,"sortType":"noteFld","timeLim":0,"dueCounts":true,"curDeck":1,"dayLearnFirst":false,"curModel":1376926904739,"activeDecks":[1]}','{"1376926904739":{"id":1376926904739,"name":"Basic-669e0","type":0,"mod":1653683567,"usn":-1,"sortf":0,"did":1653683537446,"tmpls":[{"name":"Card 1","ord":0,"qfmt":"{{Front}}","afmt":"{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}","bqfmt":"","bafmt":"","did":null,"bfont":"","bsize":0}],"flds":[{"name":"Front","ord":0,"sticky":false,"rtl":false,"font":"Arial","size":20,"media":[],"description":""},{"name":"Back","ord":1,"sticky":false,"rtl":false,"font":"Arial","size":20,"media":[],"description":""}],"css":".card {\n font-family: arial;\n font-size: 20px;\n text-align: center;\n color: black;\n background-color: white;\n}\n","latexPre":"\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n","latexPost":"\\end{document}","latexsvg":false,"req":[[0,"any",[0]]],"tags":["created-with-braindb"],"vers":[]},"1653683608163":{"id":1653683608163,"name":"Basic","type":0,"mod":0,"usn":0,"sortf":0,"did":1,"tmpls":[{"name":"Card 1","ord":0,"qfmt":"{{Front}}","afmt":"{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}","bqfmt":"","bafmt":"","did":null,"bfont":"","bsize":0}],"flds":[{"name":"Front","ord":0,"sticky":false,"rtl":false,"font":"Arial","size":20},{"name":"Back","ord":1,"sticky":false,"rtl":false,"font":"Arial","size":20}],"css":".card {\n  font-family: arial;\n  font-size: 20px;\n  text-align: center;\n  color: black;\n  background-color: white;\n}\n","latexPre":"\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n","latexPost":"\\end{document}","latexsvg":false,"req":[[0,"any",[0]]]}}','{"1653683537446":{"id":1653683537446,"mod":1653683537,"name":"BrainDB Deck","usn":-1,"lrnToday":[0,0],"revToday":[0,0],"newToday":[0,0],"timeToday":[0,0],"collapsed":false,"browserCollapsed":false,"desc":"","dyn":0,"conf":1,"extendNew":0,"extendRev":0},"1":{"id":1,"mod":0,"name":"Default","usn":0,"lrnToday":[0,0],"revToday":[0,0],"newToday":[0,0],"timeToday":[0,0],"collapsed":false,"browserCollapsed":false,"desc":"","dyn":0,"conf":1,"extendNew":0,"extendRev":0}}','{"1":{"id":1,"mod":0,"name":"Default","usn":0,"maxTaken":60,"autoplay":true,"timer":0,"replayq":true,"new":{"bury":false,"delays":[1.0,10.0],"initialFactor":2500,"ints":[1,4,0],"order":1,"perDay":20},"rev":{"bury":false,"ease4":1.3,"ivlFct":1.0,"maxIvl":36500,"perDay":200,"hardFactor":1.2},"lapse":{"delays":[10.0],"leechAction":1,"leechFails":8,"minInt":1,"mult":0.0},"dyn":false}}','{}' ''')
-        #     )
-        if i == 5: # cards
-            for j in range(0, len(query_segments_5)):
-                print(query_segments_5[j])
-                cur.execute(query_segments_5[j])
-        elif i == 7: # notes
-            for j in range(0, len(query_segments_7)):
-                print(query_segments_7[j])
-                cur.execute(query_segments_7[j])
         else:
-            print(query_segments[i])
-            cur.execute(query_segments[i])
+            print('Executing query #%s...' % str(i + 1))
+            if i == 5: # cards
+                for j in range(0, len(query_segments_5)):
+                    print(query_segments_5[j])
+                    cur.execute(query_segments_5[j])
+            elif i == 7: # notes
+                for j in range(0, len(query_segments_7)):
+                    print(query_segments_7[j])
+                    cur.execute(query_segments_7[j])
+            elif i in [10, 11, 12]:
+                pass
+            else:
+                print(query_segments[i])
+                cur.execute(query_segments[i])
     print('Successfully stored deck!')
 except Exception as e:
     print(e)
