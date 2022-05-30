@@ -7,21 +7,28 @@ import time
 from zipfile import ZipFile
 
 path_cwd = os.getcwd()
-path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
-path_anki_db = os.path.join(path_anki, 'user-deck-card-info-%s.db' % str(random.randint(10000, 99999)))
+path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs2')
+# new SQLite db file called "collection.anki2" will be generated
+path_anki_db = os.path.join(path_anki, 'collection.anki2')
+# path_anki_db = os.path.join(path_anki, 'user-deck-card-info-%s.db' % str(random.randint(100000, 999999)))
+path_anki_deck_media = os.path.join(path_anki, 'media')
+path_anki_deck_output = ''
 
 class AnkiDeckFileWriter:
     def __init__(self):
         pass
 
     def write_anki_deck(self, card_list, deck_name):
-        print(card_list)
+        # remove any still-existing copy of SQLite db file "collection.anki2"
+        os.remove(os.path.join(path_anki, 'collection.anki2'))
+
         # temp variables, should be grabbed from generate_cards.py
         if len(card_list) == 0:
             print('No card list provided, inserting default cards into SQLite DB')
             card_list = [['Front 1', 'Back 1'], ['Front 2', 'Back 2']]
         if deck_name == '':
             deck_name = 'New Deck ' + str(random.randint(0, 1e6 - 1))
+        path_anki_deck_output = os.path.join(path_anki, deck_name + '.apkg')
 
         try:
             print('Connecting to SQLite...')
@@ -132,6 +139,17 @@ class AnkiDeckFileWriter:
                     else:
                         print(query_segments[i])
                         cur.execute(query_segments[i])
-            print('Successfully stored deck!')
+            print('Successfully wrote SQLite db file!')
+
+            # finally: zip the new SQLite file + "media" to generate an Anki pkg file
+            time.sleep(1)
+            try:
+                with ZipFile(path_anki_deck_output, 'w') as myzip:
+                    myzip.write(os.path.join(path_anki, 'collection.anki2'), 'collection.anki2')
+                    myzip.write(os.path.join(path_anki, 'media'), 'media')
+                print('Successfully generated Anki pkg file!')
+            except Exception as e:
+                print(e)
+                print('Error generating Anki pkg file')
         except Exception as e:
             print(e)

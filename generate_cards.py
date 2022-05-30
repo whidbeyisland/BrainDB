@@ -205,7 +205,7 @@ q.execute_insert_query(query_string)
 
 for i in range(0, len(sentences_clozed)):
   try:
-    time.sleep(1)
+    time.sleep(0.5)
     front = sentences_clozed[i][0]
     front.replace('\'', '\\\'')
     front.replace('\"', '\\\"')
