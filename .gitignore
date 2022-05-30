@@ -6,6 +6,8 @@ config.py
 connect_db_2.py
 connect_db_3.py
 anki_sqlite_generic.py
+anki_sqlite_test.py
+anki_zip.py
 sample-user-cognito.txt
 __pycache__/
 node-modules/

@@ -4,6 +4,7 @@ import sqlite3
 import random
 import query_params
 import time
+from zipfile import ZipFile
 
 path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs')
@@ -73,10 +74,10 @@ class AnkiDeckFileWriter:
                 _sql_csum = random.randint(4.2e9, 4.3e9 - 1)
 
                 # handling insertions of single quotes per SQL Server conventions:
-                _sql_front = _sql_front.replace('\\\'', '\'\'')
-                _sql_front = _sql_front.replace('\\\"', '\"\"')
-                _sql_back = _sql_back.replace('\\\'', '\'\'')
-                _sql_back = _sql_back.replace('\\\"', '\"\"')
+                _sql_front = _sql_front.replace('\'', '\'\'')
+                _sql_front = _sql_front.replace('\"', '\"\"')
+                _sql_back = _sql_back.replace('\'', '\'\'')
+                _sql_back = _sql_back.replace('\"', '\"\"')
 
                 _query_segments_5 = _query_segments_5.replace('$sql_did', str(sql_did))
                 _query_segments_5 = _query_segments_5.replace('$sql_deckName', str(sql_deckName))
