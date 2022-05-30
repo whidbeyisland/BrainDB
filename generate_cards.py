@@ -15,11 +15,16 @@ import time
 
 from config import userid_default
 from query_executor import QueryExecutor
+from anki_deck_file_writer import AnkiDeckFileWriter
 
-# User-changeable options
-#
+# user-changeable options
 flashcards_needed = 10 # change for more cards
 default_card_text_file = 'default_card_source.txt'
+
+# temp list of cards --- should be accessible from other scripts e.g.
+# anki_sqlite.py (for saving to SQLite db)
+temp_card_list = []
+temp_deck_name = ''
 
 #-------------------------------------
 
@@ -37,6 +42,7 @@ def get_options():
     except Exception as e:
       print('Deck name not supplied. Using default name')
       deck_name = ''
+    temp_deck_name = deck_name
     
     try:
       userid    = sys.argv[6]
@@ -199,11 +205,13 @@ q.execute_insert_query(query_string)
 
 for i in range(0, len(sentences_clozed)):
   try:
-    time.sleep(1)
+    time.sleep(0.5)
     front = sentences_clozed[i][0]
     front.replace('\'', '\\\'')
+    front.replace('\"', '\\\"')
     back = sentences_clozed[i][1]
     back.replace('\'', '\\\'')
+    back.replace('\"', '\\\"')
     query_string = '''
 INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
   \'%s\',
@@ -218,3 +226,7 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
     print(e)
 
 print('Backed up to Amazon RDS')
+
+# back up deck in local Anki pkg file
+w = AnkiDeckFileWriter()
+w.write_anki_deck(sentences_clozed, options['deck_name'])

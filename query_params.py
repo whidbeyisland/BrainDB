@@ -1,0 +1,14 @@
+sql_id = 1653683561709 # card id
+sql_nid = 1653683561708 # note id
+sql_did = 1653683537446 # deck id
+sql_mod = 1653683561
+sql_due = 29355
+sql_crt = 1442476800
+sql_scm = 1653683608163
+sql_colid = 1653683608163
+sql_curModel = 1376926904739
+sql_deckName = 'BrainDB Deck'
+sql_guid = 'eB[BHB5POk'
+sql_front = '$front'
+sql_back = '$back'
+sql_csum = 4251924563

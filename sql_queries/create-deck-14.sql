@@ -1,0 +1,1 @@
+CREATE INDEX ix_cards_nid on cards (nid);

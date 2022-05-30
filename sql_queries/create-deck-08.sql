@@ -1,0 +1,1 @@
+INSERT INTO cards VALUES($sql_id,$sql_nid,$sql_did,0,$sql_mod,-1,0,0,$sql_due,0,0,0,0,0,0,0,0,'');

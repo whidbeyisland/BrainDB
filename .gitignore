@@ -1,11 +1,16 @@
-extract-pdf-2.py
-extract-pdf-3.py
-extract-text-pdf.py
+extract_pdf_2.py
+extract_pdf_3.py
+extract_text_pdf.py
 make_donation.py
 config.py
 connect_db_2.py
 connect_db_3.py
+anki_sqlite_generic.py
+anki_sqlite_test.py
+anki_zip.py
 sample-user-cognito.txt
+__pycache__/
+node-modules/
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
