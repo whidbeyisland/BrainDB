@@ -1,1 +1,1 @@
-CREATE INDEX ix_cards_sched on cards (did, queue, due);
+COMMIT;

@@ -1,1 +1,1 @@
-INSERT INTO sqlite_stat1 VALUES('col',NULL,'1');
+CREATE INDEX ix_cards_usn on cards (usn);

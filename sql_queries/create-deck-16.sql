@@ -1,1 +1,1 @@
-CREATE INDEX ix_revlog_usn on revlog (usn);
+CREATE INDEX ix_revlog_cid on revlog (cid);

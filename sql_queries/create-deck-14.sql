@@ -1,1 +1,1 @@
-CREATE INDEX ix_notes_usn on notes (usn);
+CREATE INDEX ix_cards_nid on cards (nid);

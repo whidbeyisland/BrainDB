@@ -38,7 +38,7 @@ class AnkiDeckFileWriter:
             # collect all query segments that will be used --- SQLite only allows executing
             # one ";" statement at a time
             query_segments = []
-            for i in range(1, 22):
+            for i in range(1, 19):
                 _query_path = 'sql_queries/create-deck-%s.sql' % str(i).zfill(2)
                 with open(_query_path, 'r') as file:
                     _query_string_lines = file.readlines()
@@ -120,25 +120,16 @@ class AnkiDeckFileWriter:
 
             # execute all queries in order
             for i in range(0, len(query_segments)):
-                if i in [10, 11, 12]:
-                    pass
                 # SQLite can only execute one ";" transaction at a time, so the query segments
                 # for adding *each* card and *each* note must be executed individually
+                if i == 5: # cards
+                    for j in range(0, len(query_segments_5)):
+                        cur.execute(query_segments_5[j])
+                elif i == 7: # notes
+                    for j in range(0, len(query_segments_7)):
+                        cur.execute(query_segments_7[j])
                 else:
-                    print('Executing query #%s...' % str(i + 1))
-                    if i == 5: # cards
-                        for j in range(0, len(query_segments_5)):
-                            print(query_segments_5[j])
-                            cur.execute(query_segments_5[j])
-                    elif i == 7: # notes
-                        for j in range(0, len(query_segments_7)):
-                            print(query_segments_7[j])
-                            cur.execute(query_segments_7[j])
-                    elif i in [10, 11, 12]:
-                        pass
-                    else:
-                        print(query_segments[i])
-                        cur.execute(query_segments[i])
+                    cur.execute(query_segments[i])
             print('Successfully wrote SQLite db file!')
 
             # finally: zip the new SQLite file + "media" to generate an Anki pkg file

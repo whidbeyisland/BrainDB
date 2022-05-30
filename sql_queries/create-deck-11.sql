@@ -1,1 +1,1 @@
-ANALYZE sqlite_schema;
+CREATE INDEX ix_notes_usn on notes (usn);

@@ -1,1 +1,0 @@
-CREATE INDEX ix_notes_csum on notes (csum);
