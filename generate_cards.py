@@ -1,4 +1,3 @@
-# from transformers.models.bert.modeling_bert import BertModel, BertForMaskedLM
 from transformers.models.bert.modeling_bert import BertModel, BertForMaskedLM
 import transformers
 from summarizer import Summarizer,TransformerSummarizer
@@ -168,8 +167,6 @@ def sentence_clozed(sentence, nums_allowed, persons_allowed, places_allowed):
   sentence_new = sentence.replace(_keyword, '___' + keyword_categ)
   sentence_new = sentence_new.replace(keyword_caps, '___' + keyword_categ)
   return [sentence_new, _keyword]
-
-# print(sentence_clozed('My name is Wolfgang and I was born in Berlin in 1990', True, True, True))
 
 # Whew! Now it's finally time to get your cloze-deleted cards. You can run this cell multiple times to get the same sentences with different keywords clozed out.
 

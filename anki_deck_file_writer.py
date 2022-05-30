@@ -10,7 +10,6 @@ path_cwd = os.getcwd()
 path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs2')
 # new SQLite db file called "collection.anki2" will be generated
 path_anki_db = os.path.join(path_anki, 'collection.anki2')
-# path_anki_db = os.path.join(path_anki, 'user-deck-card-info-%s.db' % str(random.randint(100000, 999999)))
 path_anki_deck_media = os.path.join(path_anki, 'media')
 path_anki_deck_output = ''
 
@@ -66,8 +65,8 @@ class AnkiDeckFileWriter:
             query_segments[3] = query_segments_3
 
             # create a list containing individual query segments for each card and each note
-            query_segments_5 = [] # card
-            query_segments_7 = [] # note
+            query_segments_5 = [] # note
+            query_segments_7 = [] # card
 
             for i in range(0, len(card_list)):
                 print('Inserting card #%s into SQLite...' % str(i + 1))
@@ -122,10 +121,10 @@ class AnkiDeckFileWriter:
             for i in range(0, len(query_segments)):
                 # SQLite can only execute one ";" transaction at a time, so the query segments
                 # for adding *each* card and *each* note must be executed individually
-                if i == 5: # cards
+                if i == 5: # notes
                     for j in range(0, len(query_segments_5)):
                         cur.execute(query_segments_5[j])
-                elif i == 7: # notes
+                elif i == 7: # cards
                     for j in range(0, len(query_segments_7)):
                         cur.execute(query_segments_7[j])
                 else:
