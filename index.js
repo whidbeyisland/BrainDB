@@ -146,6 +146,11 @@ app.post('/login', (req, res) => {
         res.write('<p>Please provide a username and password</p>');
         res.end();
     }
+    if (_username == '' || _password == '') {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password</p>');
+        res.end();
+    }
     
     if (aws_working == true) {
         try {
@@ -267,8 +272,8 @@ function generateHTMLString(htmlsection_path) {
     return html;
 }
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
 });
 
-module.exports = { generateHTMLString };
+module.exports = { server, generateHTMLString };

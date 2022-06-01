@@ -1,7 +1,11 @@
 // Mocha tests
 
+var chai = require('chai');
 var expect = require('chai').expect;
+var chaiHttp = require('chai-http');
 var index = require('../index');
+var server = index.server;
+chai.use(chaiHttp);
 
 describe('Signup', function() {
     it('generates a string for the signup page', function() {
@@ -22,6 +26,48 @@ describe('Login', function() {
         var result = index.generateHTMLString('html/htmlsection-login.html');
         expect(result).to.be.a('string');
     });
+
+    it('throws an error when the user enters a blank login', (done) => {
+        let credentials = {
+            username: '',
+            password: ''
+        }
+        chai.request(server)
+            .post('/login')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
+
+    it('throws an error when the user does not enter a username', (done) => {
+        let credentials = {
+            username: '',
+            password: 'password'
+        }
+        chai.request(server)
+            .post('/login')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
+
+    it('throws an error when the user does not enter a username', (done) => {
+        let credentials = {
+            username: 'password',
+            password: ''
+        }
+        chai.request(server)
+            .post('/login')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
 });
 
 describe('Loading Screen', function() {
@@ -31,6 +77,7 @@ describe('Loading Screen', function() {
     });
 });
 
+/*
 describe('Card Generation', function() {
 
 });
@@ -42,3 +89,4 @@ describe('Local Storage, Cards', function() {
 describe('Remote Storage, Cards', function() {
 
 });
+*/
