@@ -91,10 +91,27 @@ app.post('/upload', (req, res) => {
     try {
         _myText = req.body.myText;
         _deckName = req.body.deckName;
+    } catch {
+        try {
+            _deckName = req.body.deckName;
+            res.writeHead(404);
+            res.write('<p>Please enter some text to be flashcard-ized</p>');
+            res.end();
+        } catch {
+            res.writeHead(404);
+            res.write('<p>Please enter a deck name</p>');
+            res.end();
+        }
     }
-    catch {
-        _myText = 'null';
-        _deckName = '';
+    if (_myText == '' || _deckName == '') {
+        res.writeHead(404);
+        if (_deckName != '') {
+            res.write('<p>Please enter some text to be flashcard-ized</p>');
+        } 
+        else {
+            res.write('<p>Please enter a deck name</p>');
+        }
+        res.end();
     }
 
     // call Python script via a spawned child process
