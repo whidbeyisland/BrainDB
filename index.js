@@ -193,6 +193,11 @@ app.post('/signup', (req, res) => {
         res.write('<p>Please provide a username and password</p>');
         res.end();
     }
+    if (_username == '' || _password == '') {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password</p>');
+        res.end();
+    }
     
     if (aws_working == true) {
         try {

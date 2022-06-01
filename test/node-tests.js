@@ -12,6 +12,48 @@ describe('Signup', function() {
         var result = index.generateHTMLString('html/htmlsection-signup.html');
         expect(result).to.be.a('string');
     });
+
+    it('throws an error when the user does not enter credentials on signup', (done) => {
+        let credentials = {
+            username: '',
+            password: ''
+        }
+        chai.request(server)
+            .post('/signup')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
+
+    it('throws an error when the user does not enter a username on signup', (done) => {
+        let credentials = {
+            username: '',
+            password: 'password'
+        }
+        chai.request(server)
+            .post('/signup')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
+
+    it('throws an error when the user does not enter a password on signup', (done) => {
+        let credentials = {
+            username: 'password',
+            password: ''
+        }
+        chai.request(server)
+            .post('/signup')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
 });
 
 describe('Confirmation', function() {
@@ -27,7 +69,7 @@ describe('Login', function() {
         expect(result).to.be.a('string');
     });
 
-    it('throws an error when the user enters a blank login', (done) => {
+    it('throws an error when the user does not enter credentials on login', (done) => {
         let credentials = {
             username: '',
             password: ''
@@ -41,7 +83,7 @@ describe('Login', function() {
         });
     });
 
-    it('throws an error when the user does not enter a username', (done) => {
+    it('throws an error when the user does not enter a username on login', (done) => {
         let credentials = {
             username: '',
             password: 'password'
@@ -55,7 +97,7 @@ describe('Login', function() {
         });
     });
 
-    it('throws an error when the user does not enter a username', (done) => {
+    it('throws an error when the user does not enter a password on login', (done) => {
         let credentials = {
             username: 'password',
             password: ''
