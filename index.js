@@ -91,40 +91,59 @@ app.post('/upload', (req, res) => {
     try {
         _myText = req.body.myText;
         _deckName = req.body.deckName;
+
+        if (_myText == '' || _deckName == '') {
+            res.writeHead(404);
+            if (_deckName != '') {
+                res.write('<p>Please enter some text to be flashcard-ized</p>');
+            } 
+            else {
+                res.write('<p>Please enter a deck name</p>');
+            }
+            res.end();
+        }
+        else {
+            // call Python script via a spawned child process
+            var dataToSend;
+            console.log('Loading, hang tight...');
+            const python = spawn(
+                'python',
+                [
+                    'generate_cards.py',
+                    '--myText',
+                    _myText,
+                    '--deckName',
+                    _deckName,
+                    '--username',
+                    cur_user_aws_id
+                ]
+            );
+
+            // loading screen while Python script runs
+            var html = generateHTMLString('html/htmlsection-loading.html');
+            res.write(html);
+
+            // collect data from script
+            python.stdout.on('data', function (data) {
+                dataToSend = data.toString();
+                console.log(dataToSend);
+            });
+            python.on('close', (code) => {
+                res.write('<script>window.location.href="/";</script>');
+            });
+        }
+    } catch {
+        try {
+            _deckName = req.body.deckName;
+            res.writeHead(404);
+            res.write('<p>Please enter some text to be flashcard-ized</p>');
+            res.end();
+        } catch {
+            res.writeHead(404);
+            res.write('<p>Please enter a deck name</p>');
+            res.end();
+        }
     }
-    catch {
-        _myText = 'null';
-        _deckName = '';
-    }
-
-    // call Python script via a spawned child process
-    var dataToSend;
-    console.log('Loading, hang tight...');
-    const python = spawn(
-        'python',
-        [
-            'generate_cards.py',
-            '--myText',
-            _myText,
-            '--deckName',
-            _deckName,
-            '--username',
-            cur_user_aws_id
-        ]
-    );
-
-    // loading screen while Python script runs
-    var html = generateHTMLString('html/htmlsection-loading.html');
-    res.write(html);
-
-    // collect data from script
-    python.stdout.on('data', function (data) {
-        dataToSend = data.toString();
-        console.log(dataToSend);
-    });
-    python.on('close', (code) => {
-        res.write('<script>window.location.href="/";</script>');
-    });
 })
 
 app.get('/login', (req, res) => {
@@ -142,6 +161,11 @@ app.post('/login', (req, res) => {
         _username = req.body.username;
         _password = req.body.password;
     } catch {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password</p>');
+        res.end();
+    }
+    if (_username == '' || _password == '') {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
         res.end();
@@ -184,6 +208,11 @@ app.post('/signup', (req, res) => {
         _password = req.body.password;
         _email = req.body.email;
     } catch {
+        res.writeHead(404);
+        res.write('<p>Please provide a username and password</p>');
+        res.end();
+    }
+    if (_username == '' || _password == '') {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
         res.end();
@@ -267,8 +296,8 @@ function generateHTMLString(htmlsection_path) {
     return html;
 }
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
 });
 
-module.exports = { generateHTMLString };
+module.exports = { server, generateHTMLString };
