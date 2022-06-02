@@ -172,13 +172,3 @@ describe('Card Generation', function() {
         });
     });
 });
-
-/*
-describe('Local Storage, Cards', function() {
-
-});
-
-describe('Remote Storage, Cards', function() {
-
-});
-*/
