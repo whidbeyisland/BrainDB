@@ -63,11 +63,11 @@ app.get('/', (req, res) => {
     // write the list of decks to the screen
     // first, check if they exist
     var deckString = '';
-    var deckFolder = './files/decks';
+    var deckFolder = './files/anki-pkgs';
     fs.readdir(deckFolder, (err, files) => {
         files.forEach(file => {
-            if (file.substring(file.length - 4) == '.csv') {
-                deckString += ('<li>' + file.substring(0, file.length - 4) + '</li>');
+            if (file.substring(file.length - 5) == '.apkg') {
+                deckString += ('<li>' + file.substring(0, file.length - 5) + '</li>');
             }
         });
     });

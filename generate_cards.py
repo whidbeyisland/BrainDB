@@ -177,13 +177,6 @@ for i in range(0, len(bert_summary_sentences)):
 
 # ----------------------STORAGE---------------------------
 
-# Save it all as a DataFrame
-
-deck_df = pd.DataFrame(sentences_clozed, columns = ['Front', 'Back'])
-deck_path = os.path.join(options['path_cwd'], 'files', 'decks', options['deck_name'] + '.csv')
-deck_df.to_csv(deck_path)
-print(deck_df)
-
 # Store deck on RDS SQL Server instance
 
 q = QueryExecutor()

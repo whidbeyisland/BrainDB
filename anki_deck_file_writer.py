@@ -7,10 +7,11 @@ import time
 from zipfile import ZipFile
 
 path_cwd = os.getcwd()
-path_anki = os.path.join(path_cwd, 'files', 'anki-pkgs2')
+path_files = os.path.join(path_cwd, 'files')
+path_anki = os.path.join(path_files, 'anki-pkgs')
 # new SQLite db file called "collection.anki2" will be generated
 path_anki_db = os.path.join(path_anki, 'collection.anki2')
-path_anki_deck_media = os.path.join(path_anki, 'media')
+path_anki_deck_media = os.path.join(path_files, 'media')
 path_anki_deck_output = ''
 
 class AnkiDeckFileWriter:
@@ -136,7 +137,7 @@ class AnkiDeckFileWriter:
             try:
                 with ZipFile(path_anki_deck_output, 'w') as myzip:
                     myzip.write(os.path.join(path_anki, 'collection.anki2'), 'collection.anki2')
-                    myzip.write(os.path.join(path_anki, 'media'), 'media')
+                    myzip.write(os.path.join(path_files, 'media'), 'media')
                 print('Successfully generated Anki pkg file!')
             except Exception as e:
                 print(e)
