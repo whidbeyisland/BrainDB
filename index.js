@@ -160,6 +160,25 @@ app.post('/login', (req, res) => {
     try {
         _username = req.body.username;
         _password = req.body.password;
+        if (aws_working == true) {
+            try {
+                signIn(_username, _password).then(result => {
+                    cur_user_aws_id = result;
+                    console.log('AWS id:');
+                    console.log(cur_user_aws_id);
+                });
+    
+                res.writeHead(200);
+                res.write('<script>window.location.href="/";</script>');
+                cur_user = _username;
+            }
+            catch {
+                res.writeHead(404);
+                res.write('<p>Login failed</p>');
+            }
+            res.end();
+        }
+
     } catch {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
@@ -168,25 +187,6 @@ app.post('/login', (req, res) => {
     if (_username == '' || _password == '') {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
-        res.end();
-    }
-    
-    if (aws_working == true) {
-        try {
-            signIn(_username, _password).then(result => {
-                cur_user_aws_id = result;
-                console.log('AWS id:');
-                console.log(cur_user_aws_id);
-            });
-
-            res.writeHead(200);
-            res.write('<script>window.location.href="/";</script>');
-            cur_user = _username;
-        }
-        catch {
-            res.writeHead(404);
-            res.write('<p>Login failed</p>');
-        }
         res.end();
     }
 })
@@ -207,6 +207,19 @@ app.post('/signup', (req, res) => {
         _username = req.body.username;
         _password = req.body.password;
         _email = req.body.email;
+
+        if (aws_working == true) {
+            try {
+                signUp(_username, _password, _email);
+                res.writeHead(200);
+                res.write('<script>window.location.href="/signup-confirm";</script>');
+            }
+            catch {
+                res.writeHead(404);
+                res.write('<p>Signup failed</p>');
+            }
+            res.end();
+        }
     } catch {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
@@ -215,19 +228,6 @@ app.post('/signup', (req, res) => {
     if (_username == '' || _password == '') {
         res.writeHead(404);
         res.write('<p>Please provide a username and password</p>');
-        res.end();
-    }
-    
-    if (aws_working == true) {
-        try {
-            signUp(_username, _password, _email);
-            res.writeHead(200);
-            res.write('<script>window.location.href="/signup-confirm";</script>');
-        }
-        catch {
-            res.writeHead(404);
-            res.write('<p>Sign up failed</p>');
-        }
         res.end();
     }
 })
@@ -246,23 +246,23 @@ app.post('/signup-confirm', (req, res) => {
     try {
         _username = req.body.username;
         _code = req.body.code;
+
+        if (aws_working == true) {
+            try {
+                confirmSignUp(_username, _code);
+                res.writeHead(200);
+                res.write('<script>window.location.href="/";</script>');
+                cur_user = _username;
+            }
+            catch {
+                res.writeHead(404);
+                res.write('<p>Incorrect confirmation code provided</p>');
+            }
+            res.end();
+        }
     } catch {
         res.writeHead(404);
         res.write('<p>Please provide a username and confirmation code</p>');
-        res.end();
-    }
-    
-    if (aws_working == true) {
-        try {
-            confirmSignUp(_username, _code);
-            res.writeHead(200);
-            res.write('<script>window.location.href="/";</script>');
-            cur_user = _username;
-        }
-        catch {
-            res.writeHead(404);
-            res.write('<p>Sign-up failed</p>');
-        }
         res.end();
     }
 })
