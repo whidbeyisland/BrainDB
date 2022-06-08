@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const { signUp, confirmSignUp, signIn, signOut } = require('./auth-funcs');
 const { awsconfig } = require('./aws-exports');
+const { html } = require('mocha/lib/reporters');
 const upload = multer({});
 
 // login functionality
@@ -94,12 +95,14 @@ app.post('/upload', (req, res) => {
 
         if (_myText == '' || _deckName == '') {
             res.writeHead(404);
+            var html = '';
             if (_deckName != '') {
-                res.write('<p>Please enter some text to be flashcard-ized</p>');
+                html = generateHTMLErrorString('Please enter some body text');
             } 
             else {
-                res.write('<p>Please enter a deck name</p>');
+                html = generateHTMLErrorString('Please enter a deck name');
             }
+            res.write(html);
             res.end();
         }
         else {
@@ -136,11 +139,13 @@ app.post('/upload', (req, res) => {
         try {
             _deckName = req.body.deckName;
             res.writeHead(404);
-            res.write('<p>Please enter some text to be flashcard-ized</p>');
+            var html = generateHTMLErrorString('Please enter some text to convert to flashcards');
+            res.write(html);
             res.end();
         } catch {
             res.writeHead(404);
-            res.write('<p>Please enter a deck name</p>');
+            var html = generateHTMLErrorString('Please enter a deck name');
+            res.write(html);
             res.end();
         }
     }
@@ -174,19 +179,22 @@ app.post('/login', (req, res) => {
             }
             catch {
                 res.writeHead(404);
-                res.write('<p>Login failed</p>');
+                var html = generateHTMLErrorString('Login failed');
+                res.write(html);
             }
             res.end();
         }
 
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password</p>');
+        var html = generateHTMLErrorString('Please provide a username and password');
+        res.write(html);
         res.end();
     }
     if (_username == '' || _password == '') {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password</p>');
+        var html = generateHTMLErrorString('Please provide a username and password');
+        res.write(html);
         res.end();
     }
 })
@@ -216,18 +224,21 @@ app.post('/signup', (req, res) => {
             }
             catch {
                 res.writeHead(404);
-                res.write('<p>Signup failed</p>');
+                var html = generateHTMLErrorString('Signup failed');
+                res.write(html);
             }
             res.end();
         }
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password</p>');
+        var html = generateHTMLErrorString('Please provide a username and password');
+        res.write(html);
         res.end();
     }
     if (_username == '' || _password == '') {
         res.writeHead(404);
-        res.write('<p>Please provide a username and password</p>');
+        var html = generateHTMLErrorString('Please provide a username and password');
+        res.write(html);
         res.end();
     }
 })
@@ -256,13 +267,16 @@ app.post('/signup-confirm', (req, res) => {
             }
             catch {
                 res.writeHead(404);
-                res.write('<p>Incorrect confirmation code provided</p>');
-            }
+                var html = generateHTMLErrorString('Incorrect confirmation code provided');
+                res.write(html);
+                res.end();
+            }   
             res.end();
         }
     } catch {
         res.writeHead(404);
-        res.write('<p>Please provide a username and confirmation code</p>');
+        var html = generateHTMLErrorString('Please provide a username and confirmation code');
+        res.write(html);
         res.end();
     }
 })
@@ -277,7 +291,9 @@ app.get('/logout', (req, res) => {
         }
         catch {
             res.writeHead(404);
-            res.write('<p>Sign-out failed</p>');
+            var html = generateHTMLErrorString('Logout failed');
+            res.write(html);
+            res.end();
         }
         res.end();
     }
@@ -293,6 +309,12 @@ function generateHTMLString(htmlsection_path) {
         html_navbar.toString().replace('$userstring', '');
     html = html.toString().replace('$navbar', html_navbar);
     html = html.toString().replace('$htmlsection', htmlsection);
+    return html;
+}
+
+function generateHTMLErrorString(errorMessage) {
+    var html = generateHTMLString('html/htmlsection-error.html');
+    html = html.toString().replace('$errorMessage', errorMessage);
     return html;
 }
 
