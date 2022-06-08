@@ -12,7 +12,7 @@ async function signUp(username, password, email) {
         });
         console.log(user);
     } catch (error) {
-        console.log('error signing up:', error);
+        console.log('Error signing up: ', error);
     }
 }
 
@@ -20,7 +20,7 @@ async function confirmSignUp(username, code) {
     try {
         console.log(await aws_amplify.Auth.confirmSignUp(username, code));
     } catch (error) {
-        console.log('error confirming sign up', error);
+        console.log('Error confirming sign up: ', error);
     }
 }
 
@@ -30,7 +30,7 @@ async function signIn(username, password) {
         return user.attributes.sub;
         
     } catch (error) {
-        console.log('error signing in', error);
+        console.log('Error signing in: ', error);
         return '';
     }
 }
@@ -39,7 +39,7 @@ async function signOut() {
     try {
         await aws_amplify.Auth.signOut();
     } catch (error) {
-        console.log('error signing out: ', error);
+        console.log('Error signing out: ', error);
     }
 }
 
