@@ -53,7 +53,7 @@ describe('Signup', function() {
 
     it('throws an error when the user does not enter a password on signup', (done) => {
         let credentials = {
-            username: 'password',
+            username: 'username',
             password: ''
         }
         chai.request(server)
