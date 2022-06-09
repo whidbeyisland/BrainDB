@@ -165,31 +165,6 @@ app.post('/login', (req, res) => {
     try {
         _username = req.body.username;
         _password = req.body.password;
-        if (aws_working == true) {
-            try {
-                signIn(_username, _password).then(result => {
-                    cur_user_aws_id = result;
-                    console.log(result);
-                    console.log('AWS id:');
-                    console.log(cur_user_aws_id);
-                });
-    
-                res.writeHead(200);
-                res.write('<script>window.location.href="/";</script>');
-                cur_user = _username;
-            }
-            catch {
-                res.writeHead(404);
-                var html = generateHTMLErrorString('Login failed');
-                res.write(html);
-            }
-            res.end();
-        } else {
-            res.writeHead(404);
-            var html = generateHTMLErrorString('AWS error');
-            res.write(html);
-        }
-
     } catch {
         res.writeHead(404);
         var html = generateHTMLErrorString('Please provide a username and password');
@@ -201,6 +176,30 @@ app.post('/login', (req, res) => {
         var html = generateHTMLErrorString('Please provide a username and password');
         res.write(html);
         res.end();
+    }
+    if (aws_working == true) {
+        try {
+            signIn(_username, _password).then(result => {
+                cur_user_aws_id = result;
+                console.log
+                console.log('AWS id:');
+                console.log(cur_user_aws_id);
+            });
+
+            res.writeHead(200);
+            res.write('<script>window.location.href="/";</script>');
+            cur_user = _username;
+        }
+        catch {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('Login failed');
+            res.write(html);
+        }
+        res.end();
+    } else {
+        res.writeHead(404);
+        var html = generateHTMLErrorString('AWS error');
+        res.write(html);
     }
 })
 
@@ -220,24 +219,6 @@ app.post('/signup', (req, res) => {
         _username = req.body.username;
         _password = req.body.password;
         _email = req.body.email;
-
-        if (aws_working == true) {
-            try {
-                signUp(_username, _password, _email);
-                res.writeHead(200);
-                res.write('<script>window.location.href="/signup-confirm";</script>');
-            }
-            catch {
-                res.writeHead(404);
-                var html = generateHTMLErrorString('Signup failed');
-                res.write(html);
-            }
-            res.end();
-        } else {
-            res.writeHead(404);
-            var html = generateHTMLErrorString('AWS error');
-            res.write(html);
-        }
     } catch {
         res.writeHead(404);
         var html = generateHTMLErrorString('Please provide a username and password');
@@ -249,6 +230,23 @@ app.post('/signup', (req, res) => {
         var html = generateHTMLErrorString('Please provide a username and password');
         res.write(html);
         res.end();
+    }
+    if (aws_working == true) {
+        try {
+            signUp(_username, _password, _email);
+            res.writeHead(200);
+            res.write('<script>window.location.href="/signup-confirm";</script>');
+        }
+        catch {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('Signup failed');
+            res.write(html);
+        }
+        res.end();
+    } else {
+        res.writeHead(404);
+        var html = generateHTMLErrorString('AWS error');
+        res.write(html);
     }
 })
 
@@ -266,31 +264,30 @@ app.post('/signup-confirm', (req, res) => {
     try {
         _username = req.body.username;
         _code = req.body.code;
-
-        if (aws_working == true) {
-            try {
-                confirmSignUp(_username, _code);
-                res.writeHead(200);
-                res.write('<script>window.location.href="/";</script>');
-                cur_user = _username;
-            }
-            catch {
-                res.writeHead(404);
-                var html = generateHTMLErrorString('Incorrect confirmation code provided');
-                res.write(html);
-                res.end();
-            }   
-            res.end();
-        } else {
-            res.writeHead(404);
-            var html = generateHTMLErrorString('AWS error');
-            res.write(html);
-        }
     } catch {
         res.writeHead(404);
         var html = generateHTMLErrorString('Please provide a username and confirmation code');
         res.write(html);
         res.end();
+    }
+    if (aws_working == true) {
+        try {
+            confirmSignUp(_username, _code);
+            res.writeHead(200);
+            res.write('<script>window.location.href="/";</script>');
+            cur_user = _username;
+        }
+        catch {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('Incorrect confirmation code provided');
+            res.write(html);
+            res.end();
+        }   
+        res.end();
+    } else {
+        res.writeHead(404);
+        var html = generateHTMLErrorString('AWS error');
+        res.write(html);
     }
 })
 
