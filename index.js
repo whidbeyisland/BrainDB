@@ -169,6 +169,7 @@ app.post('/login', (req, res) => {
             try {
                 signIn(_username, _password).then(result => {
                     cur_user_aws_id = result;
+                    console.log(result);
                     console.log('AWS id:');
                     console.log(cur_user_aws_id);
                 });
@@ -183,6 +184,10 @@ app.post('/login', (req, res) => {
                 res.write(html);
             }
             res.end();
+        } else {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('AWS error');
+            res.write(html);
         }
 
     } catch {
@@ -228,6 +233,10 @@ app.post('/signup', (req, res) => {
                 res.write(html);
             }
             res.end();
+        } else {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('AWS error');
+            res.write(html);
         }
     } catch {
         res.writeHead(404);
@@ -272,6 +281,10 @@ app.post('/signup-confirm', (req, res) => {
                 res.end();
             }   
             res.end();
+        } else {
+            res.writeHead(404);
+            var html = generateHTMLErrorString('AWS error');
+            res.write(html);
         }
     } catch {
         res.writeHead(404);
@@ -296,6 +309,10 @@ app.get('/logout', (req, res) => {
             res.end();
         }
         res.end();
+    } else {
+        res.writeHead(404);
+        var html = generateHTMLErrorString('AWS error');
+        res.write(html);
     }
     cur_user = '';
     res.end();
