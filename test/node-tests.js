@@ -109,8 +109,22 @@ describe('Login', function() {
 
     it('throws an error when the user does not enter a password on login', (done) => {
         let credentials = {
-            username: 'password',
+            username: 'FakeUserName',
             password: ''
+        }
+        chai.request(server)
+            .post('/login')
+            .send(credentials)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            done();
+        });
+    });
+
+    it('throws an error when the user enters an incorrect username or password', (done) => {
+        let credentials = {
+            username: 'FakeUserName',
+            password: 'password'
         }
         chai.request(server)
             .post('/login')
