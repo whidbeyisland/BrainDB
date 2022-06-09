@@ -181,11 +181,9 @@ app.post('/login', (req, res) => {
         try {
             signIn(_username, _password).then(result => {
                 cur_user_aws_id = result;
-                console.log
                 console.log('AWS id:');
                 console.log(cur_user_aws_id);
             });
-
             res.writeHead(200);
             res.write('<script>window.location.href="/";</script>');
             cur_user = _username;
