@@ -18,7 +18,7 @@ from anki_deck_file_writer import AnkiDeckFileWriter
 
 # user-changeable options
 flashcards_needed = 10 # change for more cards
-default_card_text_file = 'default_card_source.txt'
+default_card_text_file = 'default-card-source.txt'
 
 # temp list of cards --- should be accessible from other scripts e.g.
 # anki_sqlite.py (for saving to SQLite db)
