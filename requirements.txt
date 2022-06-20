@@ -3,7 +3,11 @@ transformers==4.11.3
 bert-extractive-summarizer==0.10.1
 sentence-transformers==2.2.0
 summarizer==0.0.7
+pandas==1.3.4
+
+# for .apkg file storage
 adodbapi==2.6.2.0
 pywin32==304
 pypiwin32==223
 pyodbc==4.0.32
+#torch==1.7.0+cu110 ??? using 1.11.0 on ec2

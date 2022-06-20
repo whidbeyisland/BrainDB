@@ -1,5 +1,6 @@
-from transformers.models.bert.modeling_bert import BertModel, BertForMaskedLM
-import transformers
+# from transformers.models.bert.modeling_bert import BertModel, BertForMaskedLM
+# import transformers
+import torch
 from summarizer import Summarizer,TransformerSummarizer
 # summarizer.bert.TransformerSummarizer
 from transformers import AutoTokenizer, AutoModelForTokenClassification, AutoModel
@@ -12,9 +13,9 @@ import pandas as pd
 import uuid
 import time
 
-from config import userid_default
-from query_executor import QueryExecutor
-from anki_deck_file_writer import AnkiDeckFileWriter
+# from config import userid_default
+# from query_executor import QueryExecutor
+# from anki_deck_file_writer import AnkiDeckFileWriter
 
 # user-changeable options
 flashcards_needed = 10 # change for more cards
