@@ -9,6 +9,7 @@ anki_sqlite_generic.py
 anki_sqlite_test.py
 anki_zip.py
 test_script.py
+generate_cards_ec2.py
 sample-user-cognito.txt
 __pycache__/
 node-modules/

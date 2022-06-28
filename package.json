@@ -1,5 +1,5 @@
 {
-  "name": "app2",
+  "name": "braindb",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
@@ -16,7 +16,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",

@@ -112,7 +112,7 @@ app.post('/upload', (req, res) => {
             const python = spawn(
                 'python',
                 [
-                    'generate_cards.py',
+                    'generate_cards_eb.py',
                     '--myText',
                     _myText,
                     '--deckName',
