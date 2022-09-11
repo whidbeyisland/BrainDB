@@ -217,6 +217,7 @@ INSERT INTO Cards (DeckId, Front, Back, CreatedDate, ModifiedDate) VALUES (
 
 print('Backed up to Amazon RDS')
 
-# back up deck in local Anki pkg file
-w = AnkiDeckFileWriter()
-w.write_anki_deck(sentences_clozed, options['deck_name'])
+# coati: uncomment later
+# # back up deck in local Anki pkg file
+# w = AnkiDeckFileWriter()
+# w.write_anki_deck(sentences_clozed, options['deck_name'])
