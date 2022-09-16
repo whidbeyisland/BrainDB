@@ -5,7 +5,6 @@ from summarizer import Summarizer,TransformerSummarizer
 from transformers import AutoTokenizer, AutoModelForTokenClassification, AutoModel
 from transformers import pipeline
 import random
-import pickle
 import os
 import sys
 import pandas as pd
@@ -71,11 +70,7 @@ options = get_options()
 # >1 minute that it took before switching to "model='distilbert-base-uncased'"
 
 def get_sentences(options):
-    bert_path = os.path.join(options['path_cwd'], 'pkls', 'bert', 'pytorch_model')
-    #bert_model = BertModel.from_pretrained('distilbert-base-uncased')
-    #bert_model = BertModel.from_pretrained('distilbert-base-uncased', cache_dir='.cache/')
     bert_model = Summarizer(model='distilbert-base-uncased')
-    #bert_sum = Summarizer(bert_model)
     bert_model_output = bert_model(options['body'], min_length=60, num_sentences=options['flashcards_needed'])
     bert_summary_text = ''.join(bert_model_output)
     
